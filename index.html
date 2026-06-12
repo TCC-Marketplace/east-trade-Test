@@ -3662,8 +3662,8 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
     </div>
     <input type="file" id="prf-avatar-inp" accept="image/*" style="display:none" onchange="_profileAvatarUpload(event)">
     <div class="prf-info">
-      <div id="prf-username" class="prf-username">ArTommy</div>
-      <div class="prf-uid-row">ID: <span id="prf-uid">585246195</span></div>
+      <div id="prf-username" class="prf-username">TCC Team</div>
+      <div class="prf-uid-row">ID: <span id="prf-uid">123456789</span></div>
       <div class="prf-badges">
         <span id="prf-vip-badge" class="prf-badge regular">Regular</span>
         <span class="prf-badge verified">✓ Verified</span>
@@ -3785,13 +3785,13 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
         <span style="font-size:24px;font-weight:800;color:#000;">A</span>
       </div>
       <div>
-        <div class="ai-name" id="ai-username">ArTommy</div>
+        <div class="ai-name" id="ai-username">TCC Team</div>
         <div style="position:relative;display:inline-flex;align-items:center;gap:6px;cursor:pointer;" onclick="document.getElementById('prf-avatar-inp').click()">
           <div class="prf-av-edit" style="position:static;width:16px;height:16px;font-size:9px;border:none;background:none;">✏️</div>
         </div>
       </div>
     </div>
-    <div class="ai-row"><span>Binance ID (UID)</span><span class="ai-row-val" id="ai-uid">585246195 <span onclick="navigator.clipboard&&navigator.clipboard.writeText('585246195').then(()=>showToast('Copied UID'))" style="cursor:pointer;color:var(--t2);font-size:12px;">⎘</span></span></div>
+    <div class="ai-row"><span>Binance ID (UID)</span><span class="ai-row-val" id="ai-uid">123456789 <span onclick="navigator.clipboard&&navigator.clipboard.writeText('585246195').then(()=>showToast('Copied UID'))" style="cursor:pointer;color:var(--t2);font-size:12px;">⎘</span></span></div>
     <div class="ai-row"><span>Reg.Info</span><span class="ai-row-val" id="ai-email" style="filter:blur(4px);cursor:pointer" onclick="this.style.filter=''">smartplusteam9@gmail.com</span></div>
     <div class="ai-vip-progress">
       <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px;">Upgrade to VIP1 <span style="color:var(--y);font-weight:600;font-size:12px;cursor:pointer;" onclick="showToast('VIP Benefits')">Benefits ›</span></div>
@@ -3847,8 +3847,8 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
     <div class="vf-hero-av" id="vf-avatar">
       <span style="font-size:30px;font-weight:800;color:#000;">A</span>
     </div>
-    <div class="vf-hero-name" id="vf-username">ArTommy</div>
-    <div class="vf-hero-id">ID: <span id="vf-uid">585246195</span></div>
+    <div class="vf-hero-name" id="vf-username">TCC Team</div>
+    <div class="vf-hero-id">ID: <span id="vf-uid">123456789</span></div>
     <div class="vf-hero-badge">✓ Verified</div>
   </div>
 
@@ -9242,7 +9242,7 @@ async function astSelectNetwork(net, desc) {
   document.getElementById('ast-addr-net-name').textContent = net;
   document.getElementById('ast-addr-net-sub').textContent = AST_NET_SUBS[net] || desc;
   const addrEl = document.getElementById('ast-addr-text');
-  addrEl.innerHTML = '<span style="color:var(--t2)">กำลังโหลด address...</span>';
+  addrEl.innerHTML = '<span style="color:var(--t2)">กำลังสร้าง..address...</span>';
   const logos = {BTC:'₿',ETH:'Ξ',BNB:'B',SOL:'S',TRX:'T',USDT:'₮',USDC:'$'};
   document.getElementById('ast-qr-logo').textContent = logos[astSelectedCoin] || astSelectedCoin.charAt(0);
   astOpenDepositAddress('');
