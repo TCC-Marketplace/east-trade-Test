@@ -2747,7 +2747,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
       </div>
       <div class="ast-account-row" onclick="astSwitchTabByName('futures-a')"><span class="ast-acct-name">Futures</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-futures-usdt">41.87 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-futures-usd">≈ $1,363.39</div></div></div>
       <div class="ast-account-row" onclick="astSwitchTabByName('earn')"><span class="ast-acct-name">Earn</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-earn-usdt">0.00 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-earn-usd">≈ $0.00</div></div></div>
-      <div class="ast-account-row" onclick="astSwitchTabByName('funding')"><span class="ast-acct-name">Funding</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-funding-usdt"></div><div class="ast-acct-usd ast-hideable" id="ovw-funding-usd">≈ $0.00001433</div></div></div>
+      <div class="ast-account-row" onclick="astSwitchTabByName('funding')"><span class="ast-acct-name">Funding</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-funding-usdt">0.00000044 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-funding-usd">≈ $0.00001433</div></div></div>
       <div class="ast-account-row" onclick="astSwitchTabByName('spot-a')"><span class="ast-acct-name">Spot</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-spot-usdt">0.00 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-spot-usd">≈ $0.00</div></div></div>
     </div>
   </div>
@@ -3257,7 +3257,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
         <div class="ast-icon-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
         <div class="ast-icon-btn" onclick="openMyTrades()" title="Trade History"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="18" rx="2"/><circle cx="16" cy="16" r="5" fill="var(--bg)" stroke="currentColor" stroke-width="2"/><polyline points="16 13 16 16 18 16"/></svg></div>
       </div></div>
-      <div class="ast-total-value" style="margin-top:8px"><span class="ast-hideable"></span><span class="ast-unit">USDT</span><span class="ast-arrow">▼</span></div>
+      <div class="ast-total-value" style="margin-top:8px"><span class="ast-hideable">0.00000044</span><span class="ast-unit">USDT</span><span class="ast-arrow">▼</span></div>
       <div class="ast-usd-equiv">≈ $0.00001433</div>
     </div>
     <div class="ast-action-row">
@@ -8841,8 +8841,6 @@ async function _astRefreshBalanceIfStale() {
     if (dash.transactions) _mergeIntoHIST('transactionHistory', dash.transactions);
     if (dash.trades)       _mergeIntoHIST('tradeHistory',       dash.trades);
     if (dash.funding)      _mergeIntoHIST('fundingFee',         dash.funding);
-    if (dash.positions)    _mergeIntoHIST('positionHistory',    dash.positions.filter(p => p.status !== 'Active'));
-    if (dash.spotTrades)   _mergeIntoHIST('spotTradeHistory',   dash.spotTrades);
     if (typeof mytRefreshIfOpen === 'function') mytRefreshIfOpen();
   };
 
@@ -9076,7 +9074,7 @@ function updateOverviewBalances() {
   const earnUsdt = earnContracts.reduce((s, c) => s + (c.currentBalance || 0), 0);
 
   // Funding (static demo)
-  const fundingUsdt = 0;
+  const fundingUsdt = 0.00000044;
 
   // Spot = total spot wallet
   const spotUsdt = getSpotTotalUSDT();
@@ -12051,7 +12049,7 @@ function tfGetWalletBalance(walletId) {
       const total = earnContracts.reduce((s,c) => s + (c.currentBalance||0), 0);
       return parseFloat(total.toFixed(8));
     }
-    case 'funding':  return 0;
+    case 'funding':  return 0.00000044;
     case 'coinm':    return 0;
     case 'cross':    return 0;
     case 'isolated': return 0;
@@ -17793,15 +17791,6 @@ async function autoLoginFromMembers() {
   });
   try { localStorage.setItem('tcc_uid', session.uid); } catch(e) {}
 
-  // [v14 FIX] หลัง session restore USER_PROFILE.uid ถูก set ถูกต้องแล้ว
-  // → loadOfflineState ทันที เพื่อดึง positions/contracts/orders จาก GAS
-  // (ครั้งนี้จะใช้ uid จริง ไม่ใช่ hardcoded default)
-  setTimeout(() => {
-    if (typeof loadOfflineState === 'function') {
-      loadOfflineState().catch(e => console.warn('[Auth] loadOfflineState fail:', e.message));
-    }
-  }, 800);
-
   // [v14 FIX] upsertUser ทันทีเมื่อ restore session เพื่อให้ Users Sheet
   // มี row ครบถ้วนตั้งแต่ login ครั้งแรก (ไม่รอให้กดบันทึกโปรไฟล์)
   setTimeout(() => {
@@ -17811,22 +17800,20 @@ async function autoLoginFromMembers() {
     const isVerified = activeStatuses.some(s =>
       (session.memberStatus || '').toLowerCase().includes(s.toLowerCase())
     );
-    if (typeof dbWrite === 'function') {
-      dbWrite('upsertUser', {
-        uid,
-        username:   session.username  || USER_PROFILE.username  || '',
-        email:      USER_PROFILE.regEmail || '',
-        vip_level:  USER_PROFILE.vipLevel  || 0,
-        verified:   isVerified,
-        country:    USER_PROFILE.country   || '',
-        legal_name: USER_PROFILE.legalName || '',
-        dob:        USER_PROFILE.dob       || '',
-        id_type:    USER_PROFILE.idType    || '',
-        id_number:  USER_PROFILE.idNumber  || '',
-        address:    USER_PROFILE.address   || '',
-      });
-    }
-  }, 1500);
+    dbWrite('upsertUser', {
+      uid,
+      username:   session.username  || USER_PROFILE.username  || '',
+      email:      USER_PROFILE.regEmail || '',
+      vip_level:  USER_PROFILE.vipLevel  || 0,
+      verified:   isVerified,
+      country:    USER_PROFILE.country   || '',
+      legal_name: USER_PROFILE.legalName || '',
+      dob:        USER_PROFILE.dob       || '',
+      id_type:    USER_PROFILE.idType    || '',
+      id_number:  USER_PROFILE.idNumber  || '',
+      address:    USER_PROFILE.address   || '',
+    });
+  }, 500);
 }
 
 // ── _applyMemberToProfile — map NocoDB fields → USER_PROFILE ──
@@ -18250,18 +18237,12 @@ function _invalidateDashCache() {
 
 // ── Dashboard (Read) ──────────────────────────────────────────────
 async function loadDashboard() {
-  // [FIX dashboard-uid] USER_PROFILE.uid อาจยังเป็นค่า hardcode default
-  // ถ้า loadDashboard ถูกเรียกก่อน autoLoginFromMembers ทำงานเสร็จ
-  // → อ่าน uid จาก session โดยตรงก่อน (เหมือน loadOfflineState)
-  const _sess = (typeof _lgLoadSession === 'function') ? _lgLoadSession() : null;
-  const uid = (_sess && _sess.uid) ? String(_sess.uid).trim() : USER_PROFILE.uid;
-  if (USER_PROFILE.uid !== uid) USER_PROFILE.uid = uid; // sync ให้ component อื่นใช้ uid ถูกต้องด้วย
+  const uid = USER_PROFILE.uid;
   const cacheKey = 'dash_' + uid;
   const dash = await dbRead('getDashboard', { uid }, cacheKey, CACHE_CONFIG.TTL_DASHBOARD);
 
   if (dash && dash.user) {
     const u = dash.user;
-
     Object.assign(USER_PROFILE, {
       username:  u.username  || USER_PROFILE.username,
       regEmail:  u.email     || USER_PROFILE.regEmail,
@@ -18275,6 +18256,24 @@ async function loadDashboard() {
     if (typeof _profileRender === 'function') _profileRender();
     if (typeof _homeUpdateAvatar === 'function') _homeUpdateAvatar();
     if (typeof updateSysWalletDisplay === 'function') updateSysWalletDisplay();
+
+    // [v14 FIX] ถ้า GAS คืน user row ที่ username ว่าง (สร้างผ่าน _ensureUserRow)
+    // → upsertUser ทันทีเพื่อเติมข้อมูลครบถ้วนลง Users Sheet
+    if (!u.username && USER_PROFILE.username) {
+      dbWrite('upsertUser', {
+        uid:        uid,
+        username:   USER_PROFILE.username   || '',
+        email:      USER_PROFILE.regEmail   || '',
+        vip_level:  USER_PROFILE.vipLevel   || 0,
+        verified:   USER_PROFILE.verified   || false,
+        country:    USER_PROFILE.country    || '',
+        legal_name: USER_PROFILE.legalName  || '',
+        dob:        USER_PROFILE.dob        || '',
+        id_type:    USER_PROFILE.idType     || '',
+        id_number:  USER_PROFILE.idNumber   || '',
+        address:    USER_PROFILE.address    || '',
+      });
+    }
   }
 
   // [AUTH] รวม member data (ถ้า user record ยังไม่มีใน Users Sheet)
@@ -18298,148 +18297,121 @@ async function loadDashboard() {
   return dash;
 }
 
-// [FIX history-render] helper: ISO string → "YYYY-MM-DD HH:MM:SS"
-function _isoToHistTime(iso) {
-  if (!iso) return '';
-  const s = String(iso);
-  return s.includes('T') ? s.replace('T', ' ').slice(0, 19) : s;
-}
-
-// [FIX history-render] map raw GAS Positions row (closed) → HIST.positionHistory shape
-// UI template ต้องการ: coin, symbol, badge, mode, side, realizedPnl, roi, closedVol,
-// avgEntry, avgClose, maxOI, opened, closed, lasting, status
-function _mapGasPositionHistory(r) {
-  const sym   = r.symbol || '';
-  const lev   = parseFloat(r.lev) || 150;
-  const size  = parseFloat(r.size) || 0;
-  const lastingMs = parseFloat(r.lasting_ms) || 0;
-  const lastingMin = Math.floor(lastingMs / 60000);
-  return {
-    id:           r.id,
-    coin:         sym,
-    symbol:       sym,
-    badge:        r.badge || 'Perp',
-    mode:         (r.mode || 'Cross') + ' ' + lev + 'x',
-    lev:          lev,
-    side:         (r.side || 'long').toLowerCase(),
-    realizedPnl:  (parseFloat(r.realized_pnl) || 0).toFixed(4),
-    roi:          (parseFloat(r.roi) || 0).toFixed(2),
-    closedVol:    HIST.fmtNum(size),
-    avgEntry:     HIST.fmtPrice(r.entry_price),
-    avgClose:     HIST.fmtPrice(r.avg_close || r.exit_price),
-    maxOI:        HIST.fmtNum(r.max_oi || size),
-    unrealizedPnl: 0,
-    opened:       _isoToHistTime(r.opened_at),
-    openedTs:     r.opened_at ? Date.parse(r.opened_at) : Date.now(),
-    closed:       _isoToHistTime(r.closed_at),
-    closedTs:     r.closed_at ? Date.parse(r.closed_at) : Date.now(),
-    lasting:      lastingMin + 'm',
-    status:       r.status || 'Closed',
-  };
-}
-
-// [FIX history-render] map raw GAS Trades row → HIST.tradeHistory shape
-// UI template ต้องการ: id, coin, badge, dir, dirClass, time, ts, orderNo, price, filled, fee, role, realizedPnl
-function _mapGasTradeHistory(r) {
-  const sym = r.symbol || '';
-  const lower = String(r.dir || '').toLowerCase();
-  let dirLabel = 'Buy';
-  if (lower.includes('long')) { dirLabel = lower.includes('close') ? 'Sell' : 'Buy'; }
-  else if (lower.includes('short')) { dirLabel = lower.includes('close') ? 'Buy' : 'Sell'; }
-  else if (lower === 'sell') { dirLabel = 'Sell'; }
-  const dirClass = dirLabel.toLowerCase();
-
-  return {
-    id:           r.id,
-    coin:         sym,
-    badge:        r.badge || 'Perp',
-    dir:          dirLabel,
-    dirClass:     dirClass,
-    time:         _isoToHistTime(r.created_at),
-    ts:           r.created_at ? Date.parse(r.created_at) : Date.now(),
-    orderNo:      String(r.id || ''),
-    price:        HIST.fmtPrice(r.price),
-    filled:       HIST.fmtNum(r.filled),
-    fee:          (parseFloat(r.fee) || 0).toFixed(6),
-    role:         r.role ? (r.role.charAt(0).toUpperCase() + r.role.slice(1)) : 'Taker',
-    realizedPnl:  (parseFloat(r.realized_pnl) || 0).toFixed(4),
-  };
-}
-
-// [FIX history-render] map raw GAS SpotTrades row → HIST.spotTradeHistory shape
-function _mapGasSpotTradeHistory(r) {
-  const sym = r.symbol || '';
-  const dirLower = String(r.dir || '').toLowerCase();
-  const dirLabel = dirLower.includes('sell') ? 'Sell' : 'Buy';
-  return {
-    id:           r.id,
-    coin:         sym,
-    symbol:       sym,
-    dir:          dirLabel,
-    dirClass:     dirLabel.toLowerCase(),
-    time:         _isoToHistTime(r.created_at),
-    ts:           r.created_at ? Date.parse(r.created_at) : Date.now(),
-    orderNo:      String(r.id || ''),
-    price:        HIST.fmtPrice(r.price),
-    filled:       HIST.fmtNum(r.filled),
-    fee:          (parseFloat(r.fee) || 0).toFixed(6),
-    role:         r.role ? (r.role.charAt(0).toUpperCase() + r.role.slice(1)) : 'Taker',
-  };
-}
-
-// [FIX history-render] map raw GAS FundingFees row → HIST.fundingFee shape
-// UI template ต้องการ: asset, time, symbol, amount (string ที่มี +/-)
-function _mapGasFundingFee(r) {
-  let amt = String(r.amount != null ? r.amount : '0');
-  if (amt && !amt.startsWith('+') && !amt.startsWith('-') && parseFloat(amt) >= 0) {
-    amt = '+' + amt;
-  }
-  return {
-    id:     r.id,
-    asset:  r.asset || 'USDT',
-    symbol: r.symbol || '',
-    amount: amt,
-    time:   _isoToHistTime(r.created_at),
-    ts:     r.created_at ? Date.parse(r.created_at) : Date.now(),
-  };
-}
-
 function _mergeIntoHIST(key, rows) {
   if (!Array.isArray(rows) || !rows.length) return;
   const existing = new Set((HIST[key] || []).map(r => r.id));
   let newRows = rows.filter(r => r.id && !existing.has(r.id));
 
+  // helper: ISO string → "YYYY-MM-DD HH:MM:SS"
+  const _isoToDisplay = s => {
+    if (!s) return '';
+    return String(s).includes('T') ? String(s).replace('T',' ').slice(0,19) : String(s);
+  };
+  // helper: lasting_ms (number) → "Xd Xh Xm"
+  const _msToLasting = ms => {
+    const t = parseInt(ms) || 0;
+    const d = Math.floor(t / 86400000);
+    const h = Math.floor((t % 86400000) / 3600000);
+    const m = Math.floor((t % 3600000) / 60000);
+    return (d > 0 ? d + 'd ' : '') + (h > 0 ? h + 'h ' : '') + m + 'm';
+  };
+
   // [v13.2 FIX] normalize transactionHistory rows จาก GAS:
-  // - amount อาจมาเป็น string "+300.00000000" หรือ number → ให้ normalize เป็น string มี sign
-  // - time อาจมาเป็น ISO string → convert เป็น "YYYY-MM-DD HH:MM:SS"
-  // - ts อาจไม่มี → ใช้ Date.parse(created_at) หรือ Date.now()
   if (key === 'transactionHistory') {
     newRows = newRows.map(r => {
       let amt = String(r.amount || '0');
       if (amt && !amt.startsWith('+') && !amt.startsWith('-') && parseFloat(amt) >= 0) {
         amt = '+' + amt;
       }
-      let timeStr = r.time || r.created_at || '';
-      if (timeStr && timeStr.includes('T')) {
-        // ISO → "YYYY-MM-DD HH:MM:SS"
-        timeStr = timeStr.replace('T', ' ').slice(0, 19);
-      }
+      const timeStr = _isoToDisplay(r.time || r.created_at);
       const ts = r.ts || (timeStr ? Date.parse(timeStr) : Date.now());
       return { ...r, amount: amt, time: timeStr, ts };
     });
   }
 
-  // [FIX history-render] raw GAS rows ขาด field ที่ UI template ต้องใช้
-  // (coin, time, dirClass, mode, opened/closed, avgEntry/avgClose ฯลฯ)
-  // → ต้อง map เป็น UI shape ก่อน merge ไม่งั้น render จะ error และว่างเปล่า
-  if (key === 'positionHistory') {
-    newRows = newRows.map(_mapGasPositionHistory);
-  } else if (key === 'tradeHistory') {
-    newRows = newRows.map(_mapGasTradeHistory);
-  } else if (key === 'spotTradeHistory') {
-    newRows = newRows.map(_mapGasSpotTradeHistory);
-  } else if (key === 'fundingFee') {
-    newRows = newRows.map(_mapGasFundingFee);
+  // [v14 FIX] normalize tradeHistory rows จาก GAS:
+  // GAS fields: symbol, dir, created_at, realized_pnl, position_id
+  // HIST expects: coin, dirClass, time, ts, orderNo, realizedPnl, badge
+  else if (key === 'tradeHistory') {
+    newRows = newRows.map(r => {
+      const sym     = r.symbol || r.coin || '';
+      const dirRaw  = String(r.dir || '').toLowerCase();
+      // dir จาก GAS: 'open-long','open-short','close-long','close-short' หรือ 'Buy'/'Sell'
+      let dirLabel  = r.dir || '';
+      let dirClass  = '';
+      if (dirRaw.includes('long') || dirRaw === 'buy')  { dirLabel = dirRaw.includes('open') ? 'Open Long'  : (dirRaw.includes('close') ? 'Close Long'  : 'Buy');  dirClass = dirRaw.includes('close') ? 'close-long'  : 'open-long';  }
+      else if (dirRaw.includes('short') || dirRaw === 'sell') { dirLabel = dirRaw.includes('open') ? 'Open Short' : (dirRaw.includes('close') ? 'Close Short' : 'Sell'); dirClass = dirRaw.includes('close') ? 'close-short' : 'open-short'; }
+      const timeStr = _isoToDisplay(r.time || r.created_at);
+      const ts      = r.ts || (timeStr ? Date.parse(timeStr) : Date.now());
+      const orderNo = r.orderNo || r.position_id || String(ts);
+      return {
+        ...r,
+        coin:        sym,
+        symbol:      sym,
+        badge:       r.badge || 'Perp',
+        dir:         dirLabel,
+        dirClass:    dirClass,
+        time:        timeStr,
+        ts:          ts,
+        orderNo:     orderNo,
+        price:       r.price !== undefined ? String(r.price) : '0',
+        filled:      r.filled !== undefined ? String(r.filled) : '0',
+        fee:         r.fee    !== undefined ? String(r.fee)    : '0',
+        role:        r.role   || 'Taker',
+        realizedPnl: r.realizedPnl !== undefined ? r.realizedPnl : (r.realized_pnl !== undefined ? r.realized_pnl : '0'),
+      };
+    });
+  }
+
+  // [v14 FIX] normalize positionHistory rows จาก GAS (status=Closed):
+  // GAS fields: symbol, entry_price, exit_price, realized_pnl, roi, avg_close, max_oi,
+  //             opened_at, closed_at, lasting_ms, side, lev, mode, size, badge
+  // HIST expects: coin, avgEntry, avgClose, realizedPnl, roi, maxOI, closedVol,
+  //               opened, openedTs, closed, closedTs, lasting, status
+  else if (key === 'positionHistory') {
+    newRows = newRows.map(r => {
+      const sym      = r.symbol || r.coin || '';
+      const openedStr  = _isoToDisplay(r.opened    || r.opened_at  || '');
+      const closedStr  = _isoToDisplay(r.closed    || r.closed_at  || '');
+      const openedTs   = r.openedTs  || (openedStr ? Date.parse(openedStr) : 0);
+      const closedTs   = r.closedTs  || (closedStr ? Date.parse(closedStr) : 0);
+      const lasting    = r.lasting   || (r.lasting_ms ? _msToLasting(r.lasting_ms) : '');
+      const modeStr    = r.mode || ('Cross ' + (r.lev || '') + 'x');
+      return {
+        ...r,
+        coin:        sym,
+        symbol:      sym,
+        badge:       r.badge  || 'Perp',
+        mode:        modeStr,
+        side:        r.side   || 'long',
+        realizedPnl: r.realizedPnl !== undefined ? r.realizedPnl : (r.realized_pnl !== undefined ? r.realized_pnl : '0'),
+        roi:         r.roi    !== undefined ? r.roi    : '0',
+        closedVol:   r.closedVol !== undefined ? r.closedVol : (r.size !== undefined ? r.size : '0'),
+        avgEntry:    r.avgEntry  !== undefined ? r.avgEntry  : (r.entry_price !== undefined ? r.entry_price : '0'),
+        avgClose:    r.avgClose  !== undefined ? r.avgClose  : (r.avg_close   !== undefined ? r.avg_close   : (r.exit_price !== undefined ? r.exit_price : '0')),
+        maxOI:       r.maxOI     !== undefined ? r.maxOI     : (r.max_oi      !== undefined ? r.max_oi      : (r.size !== undefined ? r.size : '0')),
+        opened:      openedStr,
+        openedTs:    openedTs,
+        closed:      closedStr,
+        closedTs:    closedTs,
+        lasting:     lasting,
+        status:      r.status || 'Closed',
+      };
+    });
+  }
+
+  // [v14 FIX] normalize fundingFee rows จาก GAS:
+  // GAS fields: symbol, amount, asset, created_at
+  // HIST expects: coin, time, ts (asset อยู่แล้ว)
+  else if (key === 'fundingFee') {
+    newRows = newRows.map(r => {
+      const sym     = r.symbol || r.coin || '';
+      const timeStr = _isoToDisplay(r.time || r.created_at);
+      const ts      = r.ts || (timeStr ? Date.parse(timeStr) : Date.now());
+      let amt = String(r.amount || '0');
+      if (amt && !amt.startsWith('+') && !amt.startsWith('-') && parseFloat(amt) >= 0) amt = '+' + amt;
+      return { ...r, coin: sym, symbol: sym, time: timeStr, ts, amount: amt };
+    });
   }
 
   HIST[key] = [...(HIST[key] || []), ...newRows];
@@ -18863,182 +18835,104 @@ function syncOfflineEngine() {
  */
 async function loadOfflineState() {
   try {
-    // [v14 FIX] อ่าน uid จาก session โดยตรง ไม่ใช้ USER_PROFILE.uid
-    // เพราะตอน DOMContentLoaded USER_PROFILE.uid ยังเป็นค่า hardcode default
-    // session uid คือ uid จริงที่ login มา
-    const _sess = (typeof _lgLoadSession === 'function') ? _lgLoadSession() : null;
-    const uid   = (_sess && _sess.uid)
-                    ? String(_sess.uid).trim()
-                    : ((typeof USER_PROFILE !== 'undefined' && USER_PROFILE.uid) ? USER_PROFILE.uid : '');
-    if (!uid) {
-      console.warn('[OfflineEngine] loadOfflineState: uid not ready, skip');
-      return;
-    }
+    const uid = (typeof USER_PROFILE !== 'undefined') ? USER_PROFILE.uid : 'USER001';
+    if (!uid) return;
 
-    // ── helper: map GAS Position row → S.positions object ──
-    function _mapGasPosition(r) {
-      const ep  = parseFloat(r.entry_price) || 0;
-      const sz  = parseFloat(r.size)        || 0;
-      const lv  = parseFloat(r.lev)         || 150;
-      return {
-        id:             r.id,
-        uid:            r.uid,
-        coin:           (r.symbol || '').replace('USDT','').replace('-PERP',''),
-        symbol:         r.symbol || '',
-        side:           (r.side || 'long').toLowerCase(),
-        lev:            lv,
-        entry:          ep,
-        size:           sz,
-        margin:         (ep && sz && lv) ? (ep * sz) / lv : 0,
-        tp:             parseFloat(r.tp) || null,
-        sl:             parseFloat(r.sl) || null,
-        earnContractId: r.earnContractId || r.earn_contract_id || '',
-        status:         'Active',
-        pnl: 0, roi: 0, mark: 0, marginRatio: 0,
-        openedTs:       r.opened_at ? new Date(r.opened_at).getTime() : Date.now(),
-        mode:           r.mode || 'Cross',
-        _tpslSetAt:     0,
-      };
-    }
-
-    // ── helper: map GAS EarnContract row → earnContracts object ──
-    function _mapGasContract(r) {
-      return {
-        contractId:      r.contract_id,
-        userId:          r.uid || uid,
-        stakedAmount:    parseFloat(r.staked_amount)    || 0,
-        currentBalance:  parseFloat(r.current_balance)  || 0,
-        frozenBalance:   parseFloat(r.frozen_balance)   || 0,
-        planDays:        parseInt(r.plan_days)           || 0,
-        dailyYield:      parseFloat(r.daily_yield_pct)  || 0,
-        startTime:       parseInt(r.start_time_ms)       || 0,
-        endTime:         parseInt(r.end_time_ms)         || 0,
-        status:          r.status                        || 'active',
-        realizedPnl:     parseFloat(r.realized_pnl)     || 0,
-        totalClaimed:    parseFloat(r.total_claimed)     || 0,
-        lastYieldTimeMs: parseInt(r.last_yield_time_ms)  || 0,
-        lastYieldDay:    parseInt(r.last_yield_day)      || 0,
-      };
-    }
-
-    // ── helper: map GAS OpenOrder row → S.openOrders object ──
-    function _mapGasOrder(r) {
-      const sz = parseFloat(r.size)        || 0;
-      const lp = parseFloat(r.limit_price) || 0;
-      const lv = parseFloat(r.lev)         || 1;
-      return {
-        id:             r.order_id,
-        symbol:         r.symbol || '',
-        coin:           (r.symbol || '').replace('USDT',''),
-        side:           r.side          || 'long',
-        type:           r.order_type    || 'Limit',
-        lev:            lv,
-        size:           sz,
-        limitPrice:     lp,
-        margin:         sz * lp / lv,
-        tp:             parseFloat(r.tp_price) || null,
-        sl:             parseFloat(r.sl_price) || null,
-        earnContractId: r.contract_id   || '',
-        status:         'Pending',
-        createdAt:      r.created_at ? new Date(r.created_at).getTime() : Date.now(),
-      };
-    }
-
-    // ════════════════════════════════════════════════
-    //  1. POSITIONS — โหลดจาก GAS เสมอ (override local)
-    // ════════════════════════════════════════════════
+    // โหลด Active positions จาก GAS (แก้ปัญหา positions หายหลัง refresh)
     try {
       const posResult = await dbCallRaw('getOpenPositions', { uid });
-      const posList   = Array.isArray(posResult) ? posResult : [];
-      if (typeof S !== 'undefined') {
-        // [v14 FIX] ลบ condition "length === 0" — reload เสมอทุก startup
-        // merge by id: อัปเดต existing, เพิ่ม new, ลบที่หายไปจาก GAS
-        const gasIds = new Set(posList.map(r => r.id));
-        // ลบ position ที่ปิดแล้ว (ไม่มีใน GAS response)
-        S.positions = S.positions.filter(p => gasIds.has(p.id));
-        const localIds = new Set(S.positions.map(p => p.id));
-        posList.forEach(r => {
-          if (!localIds.has(r.id)) {
-            S.positions.push(_mapGasPosition(r));
-          }
-        });
+      const posList = Array.isArray(posResult) ? posResult : [];
+      if (posList.length && typeof S !== 'undefined' && S.positions.length === 0) {
+        const mappedPos = posList.map(r => ({
+          id:            r.id,
+          uid:           r.uid,
+          coin:          (r.symbol || '').replace('USDT','').replace('-PERP',''),
+          symbol:        r.symbol || '',
+          side:          (r.side || 'long').toLowerCase(),
+          lev:           parseFloat(r.lev) || 150,
+          entry:         parseFloat(r.entry_price) || 0,
+          size:          parseFloat(r.size) || 0,
+          margin:        parseFloat(r.size) && parseFloat(r.entry_price) && parseFloat(r.lev)
+                           ? (parseFloat(r.entry_price) * parseFloat(r.size)) / parseFloat(r.lev)
+                           : 0,
+          tp:            parseFloat(r.tp) || null,
+          sl:            parseFloat(r.sl) || null,
+          earnContractId: r.earnContractId || r.earn_contract_id || '',
+          status:        'Active',
+          pnl:           0, roi: 0, mark: 0, marginRatio: 0,
+          openedTs:      r.opened_at ? new Date(r.opened_at).getTime() : Date.now(),
+          mode:          r.mode || 'Cross',
+          _tpslSetAt:    0, // grace period ป้องกัน trigger ทันทีหลัง load
+        }));
+        S.positions.push(...mappedPos);
         if (typeof renderPositions === 'function') renderPositions();
         if (typeof updatePositionsPNL === 'function') updatePositionsPNL();
-        console.warn('[OfflineEngine] positions synced from GAS:', posList.length, '(local:', S.positions.length, ')');
+        console.warn('[OfflineEngine] positions loaded from GAS:', mappedPos.length);
       }
     } catch(posErr) {
       console.warn('[OfflineEngine] loadPositions fail:', posErr.message);
     }
 
-    // ════════════════════════════════════════════════
-    //  2. EARN CONTRACTS — โหลดจาก GAS เสมอ (override local)
-    // ════════════════════════════════════════════════
-    try {
-      const ecResult = await dbCallRaw('getEarnContracts', { uid });
-      const ecList   = Array.isArray(ecResult) ? ecResult
-                        : (ecResult && Array.isArray(ecResult.contracts) ? ecResult.contracts : []);
-      if (typeof earnContracts !== 'undefined' && ecList.length) {
-        const mapped = ecList.map(_mapGasContract);
-        // [v14 FIX] merge by contractId — อัปเดต balance ที่เปลี่ยนจาก GAS Engine
-        const gasMap = {};
-        mapped.forEach(c => { gasMap[c.contractId] = c; });
-        // อัปเดต local contracts ที่มีอยู่แล้ว (update balance/status)
-        earnContracts.forEach((c, i) => {
-          if (gasMap[c.contractId]) {
-            // อัปเดตเฉพาะ field ที่ GAS Engine อาจแก้ (balance, status, pnl)
-            Object.assign(earnContracts[i], {
-              currentBalance:  gasMap[c.contractId].currentBalance,
-              frozenBalance:   gasMap[c.contractId].frozenBalance,
-              status:          gasMap[c.contractId].status,
-              realizedPnl:     gasMap[c.contractId].realizedPnl,
-              totalClaimed:    gasMap[c.contractId].totalClaimed,
-              lastYieldTimeMs: gasMap[c.contractId].lastYieldTimeMs,
-              lastYieldDay:    gasMap[c.contractId].lastYieldDay,
-            });
-            delete gasMap[c.contractId]; // mark as processed
-          }
-        });
-        // เพิ่ม contract ใหม่ที่ไม่มีใน local (เช่น สร้างจากอุปกรณ์อื่น)
-        Object.values(gasMap).forEach(c => earnContracts.push(c));
-        // ถ้า local ว่าง (เช่น หลัง refresh) → ใช้ GAS data ทั้งหมด
-        if (earnContracts.length === 0) earnContracts.push(...mapped);
+    // โหลด earnContracts จาก GAS
+    // [FIX] GAS getRows() คืน array โดยตรง ไม่ใช่ { contracts: [...] }
+    const ecResult = await dbCallRaw('getEarnContracts', { uid });
+    const ecList = Array.isArray(ecResult) ? ecResult : (ecResult && Array.isArray(ecResult.contracts) ? ecResult.contracts : []);
+    if (ecList.length) {
+      // map Sheet field → HTML field
+      const mapped = ecList.map(r => ({
+        contractId:      r.contract_id,
+        userId:          r.uid || uid,
+        stakedAmount:    parseFloat(r.staked_amount)    || 0,
+        currentBalance:  parseFloat(r.current_balance)  || 0,
+        frozenBalance:   parseFloat(r.frozen_balance)   || 0,
+        planDays:        parseInt(r.plan_days)          || 0,
+        dailyYield:      parseFloat(r.daily_yield_pct)  || 0,
+        startTime:       parseInt(r.start_time_ms)      || 0,
+        endTime:         parseInt(r.end_time_ms)        || 0,
+        status:          r.status                       || 'active',
+        realizedPnl:     parseFloat(r.realized_pnl)    || 0,
+        totalClaimed:    parseFloat(r.total_claimed)    || 0,
+        lastYieldTimeMs: parseInt(r.last_yield_time_ms) || 0,
+        lastYieldDay:    parseInt(r.last_yield_day)     || 0,
+      }));
+      // merge: ถ้า local ว่างเปล่า ใช้ GAS data; ถ้ามีแล้วไม่ override (local เป็น source of truth ขณะ session)
+      if (typeof earnContracts !== 'undefined' && earnContracts.length === 0) {
+        earnContracts.push(...mapped);
         if (typeof renderEarnContracts === 'function') renderEarnContracts();
-        console.warn('[OfflineEngine] earnContracts synced from GAS:', ecList.length);
+        console.warn('[OfflineEngine] earnContracts loaded from GAS:', mapped.length);
       }
-    } catch(ecErr) {
-      console.warn('[OfflineEngine] loadEarnContracts fail:', ecErr.message);
     }
 
-    // ════════════════════════════════════════════════
-    //  3. OPEN ORDERS — โหลดจาก GAS เสมอ (override local)
-    // ════════════════════════════════════════════════
-    try {
-      const ooResult = await dbCallRaw('getOpenOrders', { uid });
-      const ooList   = Array.isArray(ooResult) ? ooResult
-                        : (ooResult && Array.isArray(ooResult.orders) ? ooResult.orders : []);
+    // โหลด openOrders จาก GAS
+    // [FIX] GAS getRows() คืน array โดยตรง ไม่ใช่ { orders: [...] }
+    const ooResult = await dbCallRaw('getOpenOrders', { uid });
+    const ooList = Array.isArray(ooResult) ? ooResult : (ooResult && Array.isArray(ooResult.orders) ? ooResult.orders : []);
+    if (ooList.length) {
+      const mapped = ooList.map(r => ({
+        id:             r.order_id,
+        symbol:         r.symbol         || '',
+        coin:           (r.symbol || '').replace('USDT',''),
+        side:           r.side           || 'long',
+        type:           r.order_type     || 'Limit',
+        lev:            parseFloat(r.lev) || 1,
+        size:           parseFloat(r.size) || 0,
+        limitPrice:     parseFloat(r.limit_price) || 0,
+        margin:         parseFloat(r.size) * parseFloat(r.limit_price) / (parseFloat(r.lev) || 1),
+        tp:             parseFloat(r.tp_price) || null,
+        sl:             parseFloat(r.sl_price) || null,
+        earnContractId: r.contract_id    || '',
+        status:         'Pending',
+        createdAt:      new Date(r.created_at).getTime() || Date.now(),
+      }));
       if (typeof S !== 'undefined') {
         S.openOrders = S.openOrders || [];
-        if (ooList.length) {
-          const gasOIds = new Set(ooList.map(r => r.order_id));
-          // [v14 FIX] sync สองทาง: ลบ order ที่ถูก fill/cancel โดย GAS Engine
-          S.openOrders = S.openOrders.filter(o => gasOIds.has(o.id));
-          const localOIds = new Set(S.openOrders.map(o => o.id));
-          ooList.forEach(r => {
-            if (!localOIds.has(r.order_id)) {
-              S.openOrders.push(_mapGasOrder(r));
-            }
-          });
-        } else {
-          // GAS คืน empty → clear local ด้วย (order ถูก fill/cancel หมดแล้ว)
-          S.openOrders = [];
+        if (S.openOrders.length === 0) {
+          S.openOrders.push(...mapped);
+          if (typeof renderOpenOrders === 'function') renderOpenOrders();
+          console.warn('[OfflineEngine] openOrders loaded from GAS:', mapped.length);
         }
-        if (typeof renderOpenOrders === 'function') renderOpenOrders();
-        console.warn('[OfflineEngine] openOrders synced from GAS:', ooList.length);
       }
-    } catch(ooErr) {
-      console.warn('[OfflineEngine] loadOpenOrders fail:', ooErr.message);
     }
-
   } catch (e) {
     console.warn('[OfflineEngine] loadOfflineState fail:', e.message);
   }
@@ -19198,13 +19092,10 @@ document.addEventListener('DOMContentLoaded', () => {
   //    ไม่ต้องเรียกที่นี่เพื่อป้องกัน navTo ซ้ำซ้อน
 
   // ── Offline Engine: sync earnContracts + openOrders ตอนเปิดแอป ──
-  // [v14 FIX] เพิ่ม delay เป็น 5000ms เพื่อให้ initSplash (4200ms) + autoLoginFromMembers
-  // set USER_PROFILE.uid จริงก่อน แล้วค่อย sync → ป้องกัน loadOfflineState ใช้ uid ผิด
-  // loadDashboard (1000ms) ยังเร็วเหมือนเดิมเพราะใช้ session uid โดยตรง
   setTimeout(() => {
     syncOfflineEngine();           // ส่ง local state → GAS
-    loadOfflineState();            // ดึง GAS state กลับ (sync ทั้ง positions/contracts/orders)
-  }, 5000);
+    loadOfflineState();            // ดึง GAS state กลับ (ถ้า local ว่าง)
+  }, 1500);
 
   setTimeout(async () => {
     try {
