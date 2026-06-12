@@ -2747,7 +2747,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
       </div>
       <div class="ast-account-row" onclick="astSwitchTabByName('futures-a')"><span class="ast-acct-name">Futures</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-futures-usdt">41.87 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-futures-usd">≈ $1,363.39</div></div></div>
       <div class="ast-account-row" onclick="astSwitchTabByName('earn')"><span class="ast-acct-name">Earn</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-earn-usdt">0.00 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-earn-usd">≈ $0.00</div></div></div>
-      <div class="ast-account-row" onclick="astSwitchTabByName('funding')"><span class="ast-acct-name">Funding</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-funding-usdt">0.00000044 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-funding-usd">≈ $0.00001433</div></div></div>
+      <div class="ast-account-row" onclick="astSwitchTabByName('funding')"><span class="ast-acct-name">Funding</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-funding-usdt">0.00 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-funding-usd">≈ $0.00001433</div></div></div>
       <div class="ast-account-row" onclick="astSwitchTabByName('spot-a')"><span class="ast-acct-name">Spot</span><div class="ast-acct-right"><div class="ast-acct-usdt ast-hideable" id="ovw-spot-usdt">0.00 USDT</div><div class="ast-acct-usd ast-hideable" id="ovw-spot-usd">≈ $0.00</div></div></div>
     </div>
   </div>
@@ -3257,8 +3257,8 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
         <div class="ast-icon-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
         <div class="ast-icon-btn" onclick="openMyTrades()" title="Trade History"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="18" rx="2"/><circle cx="16" cy="16" r="5" fill="var(--bg)" stroke="currentColor" stroke-width="2"/><polyline points="16 13 16 16 18 16"/></svg></div>
       </div></div>
-      <div class="ast-total-value" style="margin-top:8px"><span class="ast-hideable">0.00000044</span><span class="ast-unit">USDT</span><span class="ast-arrow">▼</span></div>
-      <div class="ast-usd-equiv">≈ $0.00001433</div>
+      <div class="ast-total-value" style="margin-top:8px"><span class="ast-hideable">0.00</span><span class="ast-unit">USDT</span><span class="ast-arrow">▼</span></div>
+      <div class="ast-usd-equiv">≈ $0.00</div>
     </div>
     <div class="ast-action-row">
       <button class="ast-btn-primary" onclick="astOpenDepositSheet()">Deposit</button>
@@ -9074,7 +9074,7 @@ function updateOverviewBalances() {
   const earnUsdt = earnContracts.reduce((s, c) => s + (c.currentBalance || 0), 0);
 
   // Funding (static demo)
-  const fundingUsdt = 0.00000044;
+  const fundingUsdt = 0.00;
 
   // Spot = total spot wallet
   const spotUsdt = getSpotTotalUSDT();
@@ -12049,7 +12049,7 @@ function tfGetWalletBalance(walletId) {
       const total = earnContracts.reduce((s,c) => s + (c.currentBalance||0), 0);
       return parseFloat(total.toFixed(8));
     }
-    case 'funding':  return 0.00000044;
+    case 'funding':  return 0;
     case 'coinm':    return 0;
     case 'cross':    return 0;
     case 'isolated': return 0;
