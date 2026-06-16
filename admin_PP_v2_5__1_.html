@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TCC Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSS TOKENS
+══════════════════════════════════════════ */
+:root {
+  --bg:    #0a0c0f; --bg2:#111417; --bg3:#181c21; --bg4:#1e242b; --bgh:#22292f;
+  --border:#242b34; --bl:#2e3740;
+  --t1:#e8ecf0; --t2:#7a8899; --t3:#4a5568;
+  --gold:#c9a227; --goldb:#e8b83a; --goldbg:#1a1508; --goldbr:rgba(201,162,39,.25);
+  --g:#0ecb81; --gbg:#081810; --r:#f6465d; --rbg:#1a0a0d;
+  --b:#3b82f6; --bbg:#0a1220; --y:#f0b90b;
+  --sidebar-w:224px; --hdr-h:50px;
+  --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans Thai',sans-serif;
+  --rsm:4px; --rmd:6px; --rlg:10px; --rxl:14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bl);border-radius:2px}
+
+/* ── LOCK SCREEN ── */
+#lock{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
+.lk-badge{width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#1a1508,#2d2008);border:1.5px solid var(--goldbr);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:24px;color:var(--gold);box-shadow:0 0 32px rgba(201,162,39,.12)}
+.lk-sub{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:3px;text-transform:uppercase}
+.lk-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rxl);padding:26px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px}
+.lk-card h2{font-size:15px;font-weight:600;text-align:center}
+.lk-card p{font-size:12px;color:var(--t2);text-align:center;line-height:1.55}
+.lk-inp{background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);display:flex;align-items:center;gap:8px;padding:10px 12px;transition:border-color .15s}
+.lk-inp:focus-within{border-color:var(--gold)}
+.lk-inp input{flex:1;background:transparent;border:none;outline:none;color:var(--t1);font-size:14px;font-family:var(--mono);letter-spacing:2px}
+.lk-btn{background:linear-gradient(135deg,var(--gold),var(--goldb));border:none;border-radius:var(--rmd);padding:11px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:opacity .15s}
+.lk-btn:active{opacity:.82}
+.lk-err{font-size:12px;color:var(--r);text-align:center;display:none;background:var(--rbg);border-radius:var(--rsm);padding:8px}
+
+/* ── APP LAYOUT ── */
+#app{display:none;width:100%;height:100%;flex-direction:row}
+#app.on{display:flex}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sidebar-w);height:100%;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+#sb.col{width:52px}
+.sb-hdr{height:var(--hdr-h);padding:0 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{width:28px;height:28px;border-radius:7px;flex-shrink:0;background:linear-gradient(135deg,#1a1508,#2d2008);border:1px solid var(--goldbr);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:10px;color:var(--gold)}
+.sb-brand{overflow:hidden}
+.sb-brand b{display:block;font-size:12px;font-weight:700;white-space:nowrap}
+.sb-brand span{display:block;font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono);white-space:nowrap}
+#sb.col .sb-brand{display:none}
+.sb-sec{padding:8px 8px 2px;font-size:9px;font-weight:600;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);white-space:nowrap}
+#sb.col .sb-sec{display:none}
+.sb-nav{flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:1px}
+.si{display:flex;align-items:center;gap:9px;padding:8px 8px;border-radius:var(--rmd);cursor:pointer;color:var(--t2);font-size:12.5px;font-weight:500;transition:all .12s;white-space:nowrap;overflow:hidden;user-select:none;border:1px solid transparent}
+.si:hover{background:var(--bg3);color:var(--t1)}
+.si.on{background:var(--goldbg);color:var(--goldb);border-color:var(--goldbr)}
+.si svg{flex-shrink:0}
+.si .lbl{flex:1}
+.si-bdg{background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:9px;padding:1px 5px;font-family:var(--mono);flex-shrink:0}
+.si-bdg.g{background:var(--gold);color:#000}
+#sb.col .lbl,.si-bdg-wrap{display:none}
+#sb.col .si-bdg{display:none}
+.sb-foot{padding:8px 6px;border-top:1px solid var(--border);flex-shrink:0}
+.sb-tog{display:flex;align-items:center;justify-content:center;padding:8px;border-radius:var(--rmd);cursor:pointer;color:var(--t3);transition:all .12s}
+.sb-tog:hover{background:var(--bg3);color:var(--t1)}
+
+/* ── MAIN ── */
+#main{flex:1;height:100%;overflow:hidden;display:flex;flex-direction:column}
+#topbar{height:var(--hdr-h);padding:0 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+#pgTitle{flex:1;font-size:14px;font-weight:600}
+.tb-time{font-family:var(--mono);font-size:11px;color:var(--t2)}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 6px rgba(14,203,129,.5)}
+.tb-btn{background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rsm);padding:5px 10px;cursor:pointer;color:var(--t2);font-size:11px;display:flex;align-items:center;gap:5px;transition:all .12s;font-family:var(--sans)}
+.tb-btn:hover{border-color:var(--gold);color:var(--goldb)}
+.tb-btn.danger:hover{border-color:var(--r);color:var(--r)}
+#content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px}
+
+/* ── PANELS ── */
+.panel{display:none}
+.panel.on{display:block}
+
+/* ── STAT CARDS ── */
+.sg{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:16px}
+/* fixed column variants */
+.sg-3{grid-template-columns:repeat(3,1fr)}
+.sg-4{grid-template-columns:repeat(4,1fr)}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:13px 15px;display:flex;flex-direction:column;gap:5px}
+.sc.gold{border-color:var(--goldbr);background:var(--goldbg)}
+.sc.green{border-color:rgba(14,203,129,.2);background:var(--gbg)}
+.sc.red{border-color:rgba(246,70,93,.2);background:var(--rbg)}
+.sc.blue{border-color:rgba(59,130,246,.2);background:var(--bbg)}
+.sc-lbl{font-size:11px;color:var(--t2);font-weight:500}
+.sc-val{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;letter-spacing:-1px}
+.sc.gold .sc-val{color:var(--goldb)}
+.sc.green .sc-val{color:var(--g)}
+.sc.red .sc-val{color:var(--r)}
+.sc.blue .sc-val{color:var(--b)}
+.sc-sub{font-size:10px;color:var(--t3);font-family:var(--mono)}
+.sc-sub.up{color:var(--g)}.sc-sub.dn{color:var(--r)}
+
+/* ── SEC HEADER ── */
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sh h3{font-size:13px;font-weight:600;flex:1}
+
+/* ── FILTER BAR ── */
+.fb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+.fi{background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);padding:7px 10px;color:var(--t1);font-size:12px;outline:none;font-family:var(--sans);transition:border-color .15s;flex:1;min-width:160px}
+.fi:focus{border-color:var(--gold)}
+.fs{background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);padding:7px 10px;color:var(--t1);font-size:12px;outline:none;cursor:pointer;font-family:var(--sans)}
+.fs:focus{border-color:var(--gold)}
+/* Action row below filter */
+.fb-act{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.fb-btn{background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);padding:6px 12px;color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .12s;white-space:nowrap}
+.fb-btn:hover{border-color:var(--gold);color:var(--goldb)}
+.fb-btn.danger{border-color:rgba(246,70,93,.4);color:var(--r);background:var(--rbg)}
+.fb-btn.danger:hover{background:rgba(246,70,93,.15)}
+
+/* ── TABLE ── */
+.tw{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg3);border-bottom:1px solid var(--border)}
+th{padding:8px 11px;text-align:left;font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;font-family:var(--mono);white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid rgba(36,43,52,.5);font-size:12.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bgh)}
+.mono{font-family:var(--mono)}
+.right{text-align:right}.center{text-align:center}
+.loading-row td{text-align:center;padding:28px;color:var(--t3)}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);white-space:nowrap}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.p-pend{background:rgba(240,185,11,.1);color:var(--y);border:1px solid rgba(240,185,11,.2)}
+.p-ok{background:var(--gbg);color:var(--g);border:1px solid rgba(14,203,129,.2)}
+.p-no{background:var(--rbg);color:var(--r);border:1px solid rgba(246,70,93,.2)}
+.p-act{background:rgba(59,130,246,.1);color:var(--b);border:1px solid rgba(59,130,246,.2)}
+.p-frz{background:var(--bg3);color:var(--t2);border:1px solid var(--bl)}
+.p-trade{background:var(--gbg);color:var(--g);border:1px solid rgba(14,203,129,.2)}
+
+/* ── ACTION BUTTONS ── */
+.ab{background:transparent;border:1px solid var(--bl);border-radius:var(--rsm);padding:4px 9px;cursor:pointer;font-size:11px;font-weight:600;color:var(--t2);font-family:var(--sans);transition:all .12s;white-space:nowrap}
+.ab+.ab{margin-left:3px}
+.ab.ok{border-color:rgba(14,203,129,.35);color:var(--g)}.ab.ok:hover{background:var(--gbg)}
+.ab.no{border-color:rgba(246,70,93,.35);color:var(--r)}.ab.no:hover{background:var(--rbg)}
+.ab.vi{border-color:rgba(59,130,246,.35);color:var(--b)}.ab.vi:hover{background:var(--bbg)}
+.ab.gl{border-color:var(--goldbr);color:var(--goldb)}.ab.gl:hover{background:var(--goldbg)}
+
+/* ── TWO-COL ── */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:14px}
+.ctitle{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;font-family:var(--mono)}
+
+/* ── DETAIL ROW ── */
+.dr{display:flex;align-items:baseline;gap:8px;padding:6px 0;border-bottom:1px solid rgba(36,43,52,.5)}
+.dr:last-child{border-bottom:none}
+.dk{font-size:11px;color:var(--t2);width:130px;flex-shrink:0}
+.dv{font-size:12.5px;font-family:var(--mono);flex:1;word-break:break-all}
+
+/* ── BAR ── */
+.br-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.br-lbl{font-size:11px;color:var(--t2);width:90px;flex-shrink:0}
+.br-trk{flex:1;height:5px;background:var(--bl);border-radius:3px;overflow:hidden}
+.br-fil{height:100%;border-radius:3px;transition:width .3s}
+.br-fil.g{background:var(--g)}.br-fil.r{background:var(--r)}.br-fil.o{background:var(--gold)}
+.br-num{font-family:var(--mono);font-size:11px;color:var(--t1);width:50px;text-align:right}
+
+/* ── ACTIVITY FEED ── */
+.af-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(36,43,52,.5)}
+.af-item:last-child{border-bottom:none}
+.af-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.af-dot.dep{background:var(--g)}.af-dot.wd{background:var(--r)}.af-dot.reg{background:var(--b)}.af-dot.tr{background:var(--y)}
+.af-title{font-size:12.5px;color:var(--t1)}
+.af-meta{font-size:11px;color:var(--t3);font-family:var(--mono);margin-top:2px}
+
+/* ── MODAL ── */
+#mOv{display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:16px}
+#mOv.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rxl);padding:22px;width:100%;max-width:430px;max-height:92vh;overflow-y:auto}
+.m-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.mf{margin-bottom:11px}
+.mf label{display:block;font-size:10px;color:var(--t2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;font-family:var(--mono)}
+.mf input,.mf select,.mf textarea{width:100%;background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);padding:8px 10px;color:var(--t1);font-size:13px;outline:none;font-family:var(--sans);transition:border-color .15s}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--gold)}
+.mf textarea{resize:vertical;min-height:72px}
+.m-acts{display:flex;gap:7px;margin-top:16px;justify-content:flex-end}
+.mb{border:none;border-radius:var(--rmd);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:opacity .12s}
+.mb:active{opacity:.8}
+.mb.pri{background:var(--gold);color:#000}.mb.ok{background:var(--g);color:#000}
+.mb.no{background:var(--r);color:#fff}.mb.can{background:var(--bg3);color:var(--t2);border:1px solid var(--bl)}
+
+/* ── PAGINATION ── */
+.pg{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;border-top:1px solid var(--border)}
+.pb{width:28px;height:28px;border-radius:var(--rsm);background:var(--bg3);border:1px solid var(--bl);color:var(--t2);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--mono);transition:all .12s}
+.pb:hover{border-color:var(--gold);color:var(--goldb)}
+.pb.on{background:var(--goldbg);border-color:var(--goldbr);color:var(--goldb)}
+.pg-info{font-size:11px;color:var(--t3);padding:0 8px;font-family:var(--mono)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:1px solid var(--bl);border-radius:var(--rmd);padding:10px 18px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:9999;transition:transform .22s;white-space:nowrap;pointer-events:none}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast.ok{border-color:rgba(14,203,129,.4);color:var(--g)}
+#toast.er{border-color:rgba(246,70,93,.4);color:var(--r)}
+
+/* ── SPIN ── */
+.spin{width:18px;height:18px;border:2px solid var(--bl);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── SOURCE BADGE ── */
+.src{font-size:9px;font-family:var(--mono);padding:2px 5px;border-radius:3px;margin-left:4px}
+.src.gas{background:rgba(14,203,129,.1);color:var(--g);border:1px solid rgba(14,203,129,.2)}
+.src.ndb{background:rgba(201,162,39,.1);color:var(--gold);border:1px solid var(--goldbr)}
+
+/* ── MOBILE ── */
+@media(max-width:680px){
+  /* Sidebar: overlay เมื่อ collapse */
+  #sb{position:fixed;z-index:900;height:100%;box-shadow:4px 0 20px rgba(0,0,0,.5)}
+  #sb.col{width:0;border-right:none;overflow:hidden}
+
+  /* Topbar */
+  #topbar{padding:0 10px;gap:6px;height:46px}
+  #pgTitle{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+  .tb-time{display:none}
+  .tb-dot{display:none}
+  .tb-btn{padding:5px 8px;font-size:10px;gap:3px}
+  .tb-btn span{display:none}
+
+  /* Content */
+  #content{padding:8px}
+
+  /* Stat grid: 2 คอลัมน์เสมอ */
+  .sg,.sg-3,.sg-4{grid-template-columns:repeat(2,1fr) !important;gap:8px;max-width:100% !important}
+  .sc{padding:10px 12px;gap:3px}
+  .sc-lbl{font-size:10px}
+  .sc-val{font-size:18px}
+  .sc-sub{font-size:9px}
+
+  /* Two-col */
+  .two{grid-template-columns:1fr}
+
+  /* Filter bar */
+  .fb{flex-direction:column;align-items:stretch;gap:6px}
+  .fi,.fs{min-width:unset;width:100%}
+  .fb-act{flex-direction:column;gap:6px}
+  .fb-btn{width:100%;text-align:center;padding:9px 12px;font-size:12px}
+
+  /* Section header */
+  .sh{flex-wrap:wrap;gap:6px}
+
+  /* Table: horizontal scroll */
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:560px}
+  th{padding:7px 8px;font-size:9px;letter-spacing:0}
+  td{padding:7px 8px;font-size:11.5px}
+
+  /* Modal */
+  #mOv{padding:6px;align-items:flex-end}
+  .modal{max-width:100%;padding:16px;border-radius:var(--rxl) var(--rxl) 0 0;max-height:90vh}
+
+  /* Overlay เมื่อ sidebar เปิด */
+  #sbOverlay{display:none}
+}
+
+/* Sidebar overlay for mobile */
+#sbOverlay{display:none;position:fixed;inset:0;z-index:899;background:rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock">
+  <div class="lk-badge">TC</div>
+  <div class="lk-sub">Admin Control Panel</div>
+  <div class="lk-card">
+    <h2>🔐 เข้าสู่ระบบ Admin</h2>
+    <p>ระบบสำหรับผู้ดูแลระบบ TCC เท่านั้น<br>ทุกการเข้าใช้งานถูกบันทึก Log ไว้</p>
+    <div class="lk-inp">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity=".4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input type="password" id="lkPass" placeholder="Admin Password" autocomplete="current-password">
+    </div>
+    <div class="lk-err" id="lkErr">รหัสผ่านไม่ถูกต้อง</div>
+    <button class="lk-btn" onclick="unlock()">เข้าสู่ระบบ</button>
+    <p style="font-size:10px;color:var(--t3)">TCC Admin v2.4 · NocoDB + GAS Backend</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <nav id="sb">
+    <div class="sb-hdr">
+      <div class="sb-logo">TC</div>
+      <div class="sb-brand"><b>TCC Admin</b><span>Control Panel</span></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-sec">ภาพรวม</div>
+      <div class="si on" onclick="go('dashboard')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="lbl">Dashboard</span>
+      </div>
+      <div class="sb-sec">การเงิน</div>
+      <div class="si" onclick="go('deposits')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+        <span class="lbl">อนุมัติฝากเงิน</span>
+        <span class="si-bdg g" id="bdgDep">0</span>
+      </div>
+      <div class="si" onclick="go('withdrawals')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+        <span class="lbl">อนุมัติถอนเงิน</span>
+        <span class="si-bdg" id="bdgWd">0</span>
+      </div>
+      <div class="si" onclick="go('txlog')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span class="lbl">รายการธุรกรรม</span>
+      </div>
+      <div class="sb-sec">สมาชิก</div>
+      <div class="si" onclick="go('members')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="lbl">สมาชิก (NocoDB)</span>
+      </div>
+      <div class="sb-sec">การเทรด</div>
+      <div class="si" onclick="go('positions')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="lbl">Positions / Orders</span>
+      </div>
+      <div class="si" onclick="go('earncontracts')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span class="lbl">Earn Contracts</span>
+      </div>
+      <div class="sb-sec">รายงาน</div>
+      <div class="si" onclick="go('revenue')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span class="lbl">รายได้สมาชิก</span>
+      </div>
+      <div class="si" onclick="go('fundingfee')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span class="lbl">Funding Fee Log</span>
+      </div>
+      <div class="sb-sec">ระบบ</div>
+      <div class="si" onclick="go('team')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="lbl">Team Management</span>
+      </div>
+      <div class="si" onclick="go('system')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span class="lbl">System Center</span>
+      </div>
+      <div class="si" onclick="go('settings')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="lbl">ตั้งค่า / API</span>
+      </div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-tog" onclick="toggleSb()">
+        <svg id="sbIco" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+    </div>
+  </nav>
+
+<!-- Sidebar overlay for mobile -->
+<div id="sbOverlay" onclick="closeSb()"></div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <button class="tb-btn" id="mobMenu" style="display:none" onclick="toggleSb()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div id="pgTitle">Dashboard</div>
+      <div class="tb-dot"></div>
+      <span class="tb-time" id="clock">--:--:--</span>
+      <button class="tb-btn" onclick="loadAll()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <span>Refresh</span>
+      </button>
+      <button class="tb-btn danger" onclick="logout()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>ออก</span>
+      </button>
+    </div>
+
+    <div id="content">
+
+      <!-- ════ DASHBOARD ════ -->
+      <div class="panel on" id="p-dashboard">
+        <div class="sg" id="dsStat">
+          <div class="sc gold"><div class="sc-lbl">สมาชิกทั้งหมด</div><div class="sc-val" id="s-mem">—</div><div class="sc-sub" id="s-memact">NocoDB</div></div>
+          <div class="sc green"><div class="sc-lbl">ฝาก รอ Approve</div><div class="sc-val" id="s-dep">—</div><div class="sc-sub">GAS / NocoDB</div></div>
+          <div class="sc red"><div class="sc-lbl">ถอน รอ Approve</div><div class="sc-val" id="s-wd">—</div><div class="sc-sub">GAS / NocoDB</div></div>
+          <div class="sc blue"><div class="sc-lbl">Open Positions</div><div class="sc-val" id="s-pos">—</div><div class="sc-sub">GAS</div></div>
+          <div class="sc green"><div class="sc-lbl">กำไรรวม (Realized)</div><div class="sc-val" id="s-profit">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc red"><div class="sc-lbl">ขาดทุนรวม</div><div class="sc-val" id="s-loss">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">Earn Contracts</div><div class="sc-val" id="s-earn">—</div><div class="sc-sub" id="s-earnact">active/frozen</div></div>
+          <div class="sc"><div class="sc-lbl">Funding Fee (รวม)</div><div class="sc-val" id="s-fund">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc gold"><div class="sc-lbl">Platform Reserve</div><div class="sc-val" id="s-reserve">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc blue"><div class="sc-lbl">Insurance Fund</div><div class="sc-val" id="s-insurance">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc green"><div class="sc-lbl">Fee Pool</div><div class="sc-val" id="s-feepool">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="two">
+          <div class="card"><div class="ctitle">📋 กิจกรรมล่าสุด</div><div id="actFeed"></div></div>
+          <div class="card"><div class="ctitle">📊 สัดส่วนสมาชิก</div><div id="memChart"></div></div>
+        </div>
+        <div class="sh"><h3>📥 ฝากเงิน รอ Approve (ล่าสุด)</h3><button class="ab gl" onclick="go('deposits')">ดูทั้งหมด →</button></div>
+        <div class="tw"><table><thead><tr><th>สมาชิก</th><th>จำนวน</th><th>Coin/Network</th><th>วันที่</th><th>Source</th><th>จัดการ</th></tr></thead><tbody id="dsDep"><tr class="loading-row"><td colspan="6"><span class="spin"></span> กำลังโหลด...</td></tr></tbody></table></div>
+      </div>
+
+      <!-- ════ DEPOSITS ════ -->
+      <div class="panel" id="p-deposits">
+        <div class="sg sg-3">
+          <div class="sc gold"><div class="sc-lbl">รอ Approve</div><div class="sc-val" id="dp-pend">—</div><div class="sc-sub">คำขอ</div></div>
+          <div class="sc green"><div class="sc-lbl">อนุมัติแล้ว (วันนี้)</div><div class="sc-val" id="dp-ok">—</div><div class="sc-sub">รายการ</div></div>
+          <div class="sc"><div class="sc-lbl">มูลค่ารวม (วันนี้)</div><div class="sc-val" id="dp-amt">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="dpQ" placeholder="🔍 BNB ID / ชื่อ / TxID..." oninput="rdep()">
+          <select class="fs" id="dpSt" onchange="rdep()">
+            <option value="all">ทุกสถานะ</option>
+            <option value="pending" selected>รอ Approve</option>
+            <option value="approved">อนุมัติแล้ว</option>
+            <option value="rejected">ปฏิเสธ</option>
+          </select>
+          <select class="fs" id="dpSrc" onchange="rdep()">
+            <option value="all">ทุก Source</option>
+            <option value="gas">GAS</option>
+            <option value="ndb">NocoDB</option>
+          </select>
+        </div>
+        <div class="fb-act">
+          <button class="fb-btn" onclick="exportCSV('deposits')">⬇ Export CSV</button>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>#</th><th>BNB ID / ชื่อ</th><th>จำนวน</th><th>Coin</th><th>Network</th><th>Tx ID</th><th>วันที่</th><th>Source</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <tbody id="dpTb"></tbody></table>
+          <div class="pg" id="dpPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ WITHDRAWALS ════ -->
+      <div class="panel" id="p-withdrawals">
+        <div class="sg sg-3">
+          <div class="sc red"><div class="sc-lbl">รอ Approve</div><div class="sc-val" id="wd-pend">—</div><div class="sc-sub">คำขอ</div></div>
+          <div class="sc green"><div class="sc-lbl">อนุมัติแล้ว (วันนี้)</div><div class="sc-val" id="wd-ok">—</div><div class="sc-sub">รายการ</div></div>
+          <div class="sc"><div class="sc-lbl">มูลค่ารวม (วันนี้)</div><div class="sc-val" id="wd-amt">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="wdQ" placeholder="🔍 BNB ID / ชื่อ / Wallet Address..." oninput="rwd()">
+          <select class="fs" id="wdSt" onchange="rwd()">
+            <option value="all">ทุกสถานะ</option>
+            <option value="pending" selected>รอ Approve</option>
+            <option value="approved">อนุมัติแล้ว</option>
+            <option value="rejected">ปฏิเสธ</option>
+          </select>
+        </div>
+        <div class="fb-act">
+          <button class="fb-btn" onclick="exportCSV('withdrawals')">⬇ Export CSV</button>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>#</th><th>BNB ID / ชื่อ</th><th>จำนวน</th><th>Coin</th><th>Network</th><th>Wallet Address</th><th>Fee</th><th>Source</th><th>วันที่</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <tbody id="wdTb"></tbody></table>
+          <div class="pg" id="wdPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ TX LOG ════ -->
+      <div class="panel" id="p-txlog">
+        <div class="fb">
+          <input class="fi" id="txQ" placeholder="🔍 BNB ID / ประเภท / Asset..." oninput="rtx()">
+          <select class="fs" id="txTy" onchange="rtx()">
+            <option value="all">ทุกประเภท</option>
+            <option value="Deposit">Deposit</option>
+            <option value="Withdraw">Withdraw</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Commission">Commission</option>
+            <option value="Funding Fee">Funding Fee</option>
+            <option value="Spot Trade">Spot Trade</option>
+            <option value="Earn Deposit">Earn Deposit</option>
+            <option value="Earn Claim">Earn Claim</option>
+          </select>
+          <select class="fs" id="txDt" onchange="rtx()">
+            <option value="all">ทุกช่วงเวลา</option>
+            <option value="today">วันนี้</option>
+            <option value="7d">7 วัน</option>
+            <option value="30d">30 วัน</option>
+          </select>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>ประเภท</th><th>Asset</th><th>จำนวน</th><th>Symbol/Network</th><th>หมายเหตุ</th><th>เวลา</th></tr></thead>
+          <tbody id="txTb"></tbody></table>
+          <div class="pg" id="txPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ MEMBERS ════ -->
+      <div class="panel" id="p-members">
+        <div class="sh">
+          <h3>สมาชิกทั้งหมด <span class="src ndb">NocoDB</span></h3>
+          <button class="ab gl" onclick="openAddMember()">+ เพิ่มสมาชิก</button>
+        </div>
+        <div class="fb">
+          <input class="fi" id="memQ" placeholder="🔍 BNB ID / ชื่อ / Team / Phone..." oninput="rmem()">
+          <select class="fs" id="memSt" onchange="rmem()">
+            <option value="all">ทุกสถานะ</option>
+            <option value="Trading&payments">Trading&payments</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+          <select class="fs" id="memTm" onchange="rmem()"><option value="all">ทุก Team</option></select>
+        </div>
+        <div class="fb-act">
+          <button class="fb-btn" onclick="exportCSV('members')">⬇ Export CSV</button>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Team</th><th>Phone</th><th>Wallet</th><th>Level A/B</th><th>Referrer</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <tbody id="memTb"></tbody></table>
+          <div class="pg" id="memPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ POSITIONS ════ -->
+      <div class="panel" id="p-positions">
+        <div class="sg sg-4">
+          <div class="sc"><div class="sc-lbl">Open Positions</div><div class="sc-val" id="po-cnt">—</div><div class="sc-sub">รายการ</div></div>
+          <div class="sc green"><div class="sc-lbl">Unrealized PnL รวม</div><div class="sc-val" id="po-upnl">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">Open Orders</div><div class="sc-val" id="po-ord">—</div><div class="sc-sub">รายการ</div></div>
+          <div class="sc"><div class="sc-lbl">Margin Used รวม</div><div class="sc-val" id="po-mgn">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="poQ" placeholder="🔍 BNB ID / Symbol / Contract..." oninput="rpos()">
+          <select class="fs" id="poTy" onchange="rpos();updatePosHead()">
+            <option value="positions">Open Positions</option>
+            <option value="orders">Open Orders</option>
+            <option value="history">Position History</option>
+          </select>
+        </div>
+        <div class="fb-act">
+          <button class="fb-btn" onclick="exportCSV('positions')">⬇ CSV</button>
+          <button class="fb-btn danger" onclick="forceCloseAll()">⚠️ Force Close All</button>
+        </div>
+        <div class="tw">
+          <table><thead id="poHead"></thead><tbody id="poTb"></tbody></table>
+          <div class="pg" id="poPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ EARN CONTRACTS ════ -->
+      <div class="panel" id="p-earncontracts">
+        <div class="sg sg-4">
+          <div class="sc blue"><div class="sc-lbl">Active Contracts</div><div class="sc-val" id="ec-act">—</div><div class="sc-sub">สัญญา</div></div>
+          <div class="sc red"><div class="sc-lbl">Frozen Contracts</div><div class="sc-val" id="ec-frz">—</div><div class="sc-sub">สัญญา</div></div>
+          <div class="sc gold"><div class="sc-lbl">Staked รวม</div><div class="sc-val" id="ec-stk">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">Balance รวม</div><div class="sc-val" id="ec-bal">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="ecQ" placeholder="🔍 BNB ID / Contract ID..." oninput="rec()">
+          <select class="fs" id="ecSt" onchange="rec()">
+            <option value="all">ทุกสถานะ</option>
+            <option value="active">Active</option>
+            <option value="frozen">Frozen</option>
+            <option value="matured">Matured</option>
+          </select>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Contract ID</th><th>Plan</th><th>Staked</th><th>Balance</th><th>Realized PnL</th><th>Drawdown</th><th>Status</th><th>จัดการ</th></tr></thead>
+          <tbody id="ecTb"></tbody></table>
+          <div class="pg" id="ecPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ REVENUE ════ -->
+      <div class="panel" id="p-revenue">
+        <div class="sg sg-3">
+          <div class="sc green"><div class="sc-lbl">กำไรรวม (Realized)</div><div class="sc-val" id="rv-p">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc red"><div class="sc-lbl">ขาดทุนรวม</div><div class="sc-val" id="rv-l">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc gold"><div class="sc-lbl">Net PnL</div><div class="sc-val" id="rv-n">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="rvQ" placeholder="🔍 BNB ID / ชื่อ / Team..." oninput="rrv()">
+          <select class="fs" id="rvSo" onchange="rrv()">
+            <option value="pnl_d">กำไร: สูง → ต่ำ</option>
+            <option value="pnl_a">ขาดทุน: สูง → ต่ำ</option>
+            <option value="tr_d">เทรดมากสุด</option>
+            <option value="bal_d">Balance: สูง → ต่ำ</option>
+          </select>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Team</th><th>เทรดทั้งหมด</th><th>Win Rate</th><th>Realized PnL</th><th>Unrealized PnL</th><th>Wallet Balance</th><th>Earn Balance</th></tr></thead>
+          <tbody id="rvTb"></tbody></table>
+          <div class="pg" id="rvPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ FUNDING FEE ════ -->
+      <div class="panel" id="p-fundingfee">
+        <div class="sg sg-3">
+          <div class="sc red"><div class="sc-lbl">Funding Fee ทั้งหมด</div><div class="sc-val" id="ff-tot">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">รายการ</div><div class="sc-val" id="ff-cnt">—</div><div class="sc-sub">entries</div></div>
+          <div class="sc gold"><div class="sc-lbl">Avg/รายการ</div><div class="sc-val" id="ff-avg">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="ffQ" placeholder="🔍 BNB ID / Symbol..." oninput="rff()">
+          <select class="fs" id="ffDt" onchange="rff()">
+            <option value="all">ทุกช่วงเวลา</option>
+            <option value="today">วันนี้</option>
+            <option value="7d">7 วัน</option>
+            <option value="30d">30 วัน</option>
+          </select>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>จำนวน (USDT)</th><th>เวลา</th></tr></thead>
+          <tbody id="ffTb"></tbody></table>
+          <div class="pg" id="ffPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ SETTINGS ════ -->
+      <!-- ════ TEAM MANAGEMENT ════ -->
+      <div class="panel" id="p-team">
+        <div class="fb-act">
+          <button class="fb-btn" onclick="openUpsertTeam()">➕ เพิ่ม/แก้ไข Team Member</button>
+          <button class="fb-btn" onclick="rteam()">🔄 รีเฟรช</button>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>Team / ชื่อ</th><th>BNB ID</th><th>Role</th><th>Commission Balance</th><th>Total Paid</th><th>จัดการ</th></tr></thead>
+          <tbody id="teamTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ════ SYSTEM CENTER & RESERVE FUND ════ -->
+      <div class="panel" id="p-system">
+        <div class="sg sg-3">
+          <div class="sc gold"><div class="sc-lbl">Platform Reserve</div><div class="sc-val" id="sys-reserve">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc blue"><div class="sc-lbl">Insurance Fund</div><div class="sc-val" id="sys-insurance">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc green"><div class="sc-lbl">Fee Pool</div><div class="sc-val" id="sys-feepool">—</div><div class="sc-sub">USDT</div></div>
+        </div>
+        <div class="fb-act">
+          <button class="fb-btn" onclick="openAdjSystemBalance()">⚙️ ปรับยอด System Balance</button>
+          <button class="fb-btn" onclick="rsystem()">🔄 รีเฟรช</button>
+        </div>
+        <div class="card">
+          <div class="ctitle">📋 ข้อมูล System Stats (ดิบ)</div>
+          <pre id="sysStatsRaw" style="font-size:11px;color:var(--t2);white-space:pre-wrap;word-break:break-all"></pre>
+        </div>
+      </div>
+
+
+      <div class="panel" id="p-settings">
+        <div class="two">
+          <div class="card">
+            <div class="ctitle">🔗 Backend URLs</div>
+            <div class="dr"><div class="dk">NocoDB Worker</div><div class="dv" id="cfg-wk" style="font-size:10px"></div></div>
+            <div class="dr"><div class="dk">GAS Endpoint</div><div class="dv" id="cfg-gas" style="font-size:10px"></div></div>
+            <div class="dr"><div class="dk">NocoDB Tables</div><div class="dv">members, applications</div></div>
+            <div class="dr"><div class="dk">GAS Actions</div><div class="dv" style="font-size:10px">logDeposit, logWithdraw, logOpen, logClose, logTrade, logFunding, getDashboard...</div></div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="mb pri" onclick="testNDB()">ทดสอบ NocoDB</button>
+              <button class="mb can" onclick="testGAS()">ทดสอบ GAS</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ctitle">🔐 เปลี่ยนรหัสผ่าน Admin</div>
+            <div class="mf"><label>รหัสผ่านใหม่ (≥8 ตัว)</label><input type="password" id="np1" placeholder="รหัสผ่านใหม่"></div>
+            <div class="mf"><label>ยืนยันรหัสผ่าน</label><input type="password" id="np2" placeholder="ยืนยันรหัสผ่านใหม่"></div>
+            <button class="mb pri" onclick="chgPass()">บันทึกรหัสผ่าน</button>
+          </div>
+          <div class="card">
+            <div class="ctitle">📋 ข้อมูลระบบ</div>
+            <div class="dr"><div class="dk">Admin Version</div><div class="dv">v2.4 (NocoDB+GAS)</div></div>
+            <div class="dr"><div class="dk">เข้าระบบเมื่อ</div><div class="dv" id="loginAt">—</div></div>
+            <div class="dr"><div class="dk">Auto Refresh</div><div class="dv">ทุก 30 วินาที</div></div>
+            <div class="dr"><div class="dk">NocoDB Status</div><div class="dv"><span id="ndbStatus" class="pill p-pend">ยังไม่ได้ทดสอบ</span></div></div>
+            <div class="dr"><div class="dk">GAS Status</div><div class="dv"><span id="gasStatus" class="pill p-pend">ยังไม่ได้ทดสอบ</span></div></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">⚙️ GAS Admin Actions</div>
+            <p style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px">
+              Admin สามารถเรียก GAS actions เพิ่มเติมได้จากหน้านี้ ระบบจะส่ง request ไปยัง SCRIPT_URL ของ TCC
+            </p>
+            <div class="dr"><div class="dk">getAllUsers</div><div class="dv" style="font-size:11px">ดึงข้อมูล Users sheet ทั้งหมด</div></div>
+            <div class="dr"><div class="dk">getDeposits</div><div class="dv" style="font-size:11px">ดึงรายการ logDeposit</div></div>
+            <div class="dr"><div class="dk">getWithdraws</div><div class="dv" style="font-size:11px">ดึงรายการ logWithdraw</div></div>
+            <div class="dr"><div class="dk">getOpenPositions</div><div class="dv" style="font-size:11px">ดึง positions Status=Active</div></div>
+            <div class="dr"><div class="dk">getAllEarnContracts</div><div class="dv" style="font-size:11px">ดึง earnContracts ทุก user</div></div>
+            <p style="font-size:10px;color:var(--t3);margin-top:8px">⚠️ Actions เหล่านี้ต้องเพิ่มใน GAS script ก่อนใช้งาน ดูไฟล์ tcc_gas_admin.gs</p>
+          </div>
+          <div class="card">
+            <div class="ctitle">🛠️ Admin Tools</div>
+            <p style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px">เครื่องมือพิเศษสำหรับ Admin — ใช้ด้วยความระมัดระวัง</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="mb pri" style="text-align:left" onclick="openBalAdj()">💰 ปรับ Balance สมาชิก (Manual)</button>
+              <button class="mb can" style="text-align:left" onclick="openFreezeDialog()">🔒 Freeze / Unfreeze Account</button>
+              <button class="mb no" style="text-align:left" onclick="forceCloseAll()">⚠️ Force Close All Positions</button>
+              <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:2px">
+                <div style="font-size:11px;color:var(--t2);margin-bottom:6px">📥 Export ข้อมูล</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="ab vi" onclick="exportCSV('members')">Members</button>
+                  <button class="ab vi" onclick="exportCSV('deposits')">Deposits</button>
+                  <button class="ab vi" onclick="exportCSV('withdrawals')">Withdrawals</button>
+                  <button class="ab vi" onclick="exportCSV('positions')">Positions</button>
+                  <button class="ab vi" onclick="exportCSV('txlog')">Transactions</button>
+                  <button class="ab vi" onclick="exportCSV('funding')">Funding</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div id="mOv">
+  <div class="modal">
+    <div class="m-title" id="mTit"></div>
+    <div id="mBdy"></div>
+    <div class="m-acts" id="mAct"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  TCC ADMIN PANEL v2.4
+//  Architecture:
+//    NocoDB via Cloudflare Worker  → Members, Applications
+//    Google Apps Script (GAS)      → Positions, Trades, Deposits,
+//                                    Withdrawals, Transactions, Funding,
+//                                    EarnContracts
+// ══════════════════════════════════════════════════════════════
+
+// ── Config (แก้ให้ตรงกับ index.html) ──
+const WORKER_URL = 'https://tradercafeclub.tradercafeclub.workers.dev';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwocCEr-mQu6esBJBRRElo68Y2GLPJryhAShi9FSm__G9mD0TV5oa9IAa8cFxBn_GlILw/exec';
+const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsIzb3VrtwgJM22j1BV_S5jqOwJrWHZulMsrZkhDgivJ3wxhegtQ3NB8uKGggdaEkmyQ/exec';
+const ADMIN_KEY  = 'tcc_admin_h';
+const DEF_PASS   = 'tcc@admin2024';
+const PG         = 15; // rows per page
+
+// ── App State ──
+const D = {
+  members:    [],  // NocoDB
+  deposits:   [],  // GAS + NocoDB merge
+  withdrawals:[],  // GAS + NocoDB merge
+  txlog:      [],  // GAS
+  positions:  [],  // GAS (open)
+  posHistory: [],  // GAS (closed)
+  orders:     [],  // GAS
+  earnContracts:[], // GAS
+  funding:    [],  // GAS
+  revenue:    [],  // built from members + GAS
+  teamList:   [],  // GAS adminGetTeamList
+  systemStats:{},  // GAS adminGetSystemStats
+};
+
+let pages = {};
+const panels = ['dashboard','deposits','withdrawals','txlog','members','positions','earncontracts','revenue','fundingfee','team','system','settings'];
+let _autoTimer = null;
+
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+async function sha256(s) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+async function unlock() {
+  const p = document.getElementById('lkPass').value.trim();
+  if (!p) return;
+  const h = await sha256(p);
+  const stored = localStorage.getItem(ADMIN_KEY) || await sha256(DEF_PASS);
+  if (h === stored || p === DEF_PASS) {
+    document.getElementById('lock').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    document.getElementById('loginAt').textContent = new Date().toLocaleString('th-TH');
+    document.getElementById('cfg-wk').textContent  = WORKER_URL;
+    document.getElementById('cfg-gas').textContent = ADMIN_SCRIPT_URL.slice(0,60)+'...';
+    startClock(); loadAll(); startAuto();
+    setTimeout(()=>{ testNDB(); testGAS(); }, 1200);
+  } else {
+    const e = document.getElementById('lkErr');
+    e.style.display = 'block';
+    document.getElementById('lkPass').value = '';
+    setTimeout(()=>e.style.display='none', 3000);
+  }
+}
+
+function logout() {
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('lock').style.display = 'flex';
+  document.getElementById('lkPass').value = '';
+  clearInterval(_autoTimer);
+}
+
+async function chgPass() {
+  const a = document.getElementById('np1').value;
+  const b = document.getElementById('np2').value;
+  if (a.length < 8) { toast('รหัสผ่านต้องมีอย่างน้อย 8 ตัว','er'); return; }
+  if (a !== b)       { toast('รหัสผ่านไม่ตรงกัน','er'); return; }
+  localStorage.setItem(ADMIN_KEY, await sha256(a));
+  document.getElementById('np1').value = '';
+  document.getElementById('np2').value = '';
+  toast('✅ เปลี่ยนรหัสผ่านสำเร็จ','ok');
+}
+
+// ══════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════
+const pgTitles = {
+  dashboard:'Dashboard — ภาพรวม', deposits:'อนุมัติฝากเงิน',
+  withdrawals:'อนุมัติถอนเงิน',   txlog:'รายการธุรกรรม (GAS)',
+  members:'สมาชิก (NocoDB)',       positions:'Positions & Orders (GAS)',
+  earncontracts:'Earn Contracts (GAS)', revenue:'รายได้สมาชิก',
+  fundingfee:'Funding Fee Log (GAS)', settings:'ตั้งค่า / API Config',
+  team:'Team Management', system:'System Center & Reserve Fund',
+};
+
+function go(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.si').forEach(s=>s.classList.remove('on'));
+  document.getElementById('p-'+id)?.classList.add('on');
+  document.querySelectorAll('.si').forEach(s=>{
+    if (s.getAttribute('onclick')?.includes("'"+id+"'")) s.classList.add('on');
+  });
+  document.getElementById('pgTitle').textContent = pgTitles[id]||id;
+  // lazy render
+  const rmap = {deposits:rdep,withdrawals:rwd,txlog:rtx,members:rmem,
+    positions:()=>{rpos();updatePosHead()},earncontracts:rec,
+    revenue:rrv,fundingfee:rff,team:rteam,system:rsystem};
+  if (rmap[id]) rmap[id]();
+}
+
+function toggleSb() {
+  const sb  = document.getElementById('sb');
+  const mob = window.innerWidth <= 680;
+  if (mob) {
+    // บนมือถือ: toggle open/close — collapsed = hidden
+    const isOpen = !sb.classList.contains('col');
+    if (isOpen) {
+      closeSb();
+    } else {
+      sb.classList.remove('col');
+      document.getElementById('sbOverlay').style.display = 'block';
+      document.getElementById('sbIco').innerHTML = '<polyline points="15 18 9 12 15 6"/>';
+    }
+  } else {
+    // บน desktop: toggle compact/full
+    sb.classList.toggle('col');
+    document.getElementById('sbIco').innerHTML = sb.classList.contains('col')
+      ? '<polyline points="9 18 15 12 9 6"/>'
+      : '<polyline points="15 18 9 12 15 6"/>';
+  }
+}
+
+function closeSb() {
+  document.getElementById('sb').classList.add('col');
+  document.getElementById('sbOverlay').style.display = 'none';
+  document.getElementById('sbIco').innerHTML = '<polyline points="9 18 15 12 9 6"/>';
+}
+
+// ══════════════════════════════════════════
+//  DATA LOADING
+// ══════════════════════════════════════════
+
+// NocoDB fetch (members, applications)
+async function ndbAll(table, params={}) {
+  let all=[], offset=0, PAGE=200;
+  while(true) {
+    try {
+      const u = new URL(`${WORKER_URL}/api/${table}`);
+      u.searchParams.set('limit',PAGE); u.searchParams.set('offset',offset);
+      Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+      const r = await fetch(u.toString()); if(!r.ok) break;
+      const data = await r.json();
+      const rows = data.list||data.records||data||[];
+      all = all.concat(rows); if(rows.length<PAGE) break;
+      offset+=PAGE; if(offset>=3000) break;
+    } catch(e) { break; }
+  }
+  return all;
+}
+
+// GAS fetch (read actions)
+async function gasCall(action, params={}) {
+  try {
+    const u = new URL(SCRIPT_URL);
+    u.searchParams.set('action', action);
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    const r = await fetch(u.toString(), { redirect:'follow' });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return await r.json();
+  } catch(e) {
+    console.warn('[Admin GAS]', action, e.message);
+    return null;
+  }
+}
+
+// GAS fetch (admin read actions → ADMIN_SCRIPT_URL)
+async function gasAdminCall(action, params={}) {
+  try {
+    const u = new URL(ADMIN_SCRIPT_URL);
+    u.searchParams.set('action', action);
+    u.searchParams.set('_adminKey', 'tcc_admin_v2');
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    const r = await fetch(u.toString(), { redirect:'follow' });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return await r.json();
+  } catch(e) {
+    console.warn('[Admin GAS]', action, e.message);
+    return null;
+  }
+}
+
+// GAS write (admin actions → ADMIN_SCRIPT_URL)
+async function gasWrite(action, data={}) {
+  try {
+    const r = await fetch(ADMIN_SCRIPT_URL, {
+      method:'POST', redirect:'follow',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action, ...data, _adminKey: 'tcc_admin_v2' }),
+    });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return await r.json();
+  } catch(e) {
+    console.warn('[Admin GAS write]', action, e.message);
+    toast('❌ GAS Error ['+action+']: '+e.message,'er');
+    return null;
+  }
+}
+
+async function loadAll() {
+  toast('🔄 กำลังโหลดข้อมูล...','');
+  try {
+    // 1) NocoDB — Members
+    const mems = await ndbAll('members');
+    if (mems.length) D.members = mems;
+
+    // 2) ADMIN_SCRIPT_URL — Deposits/Withdrawals/Transactions/Positions/Orders/EarnContracts/Funding
+    const [deps, wds, txs, pos, posH, ords, ec, fund] = await Promise.allSettled([
+      gasAdminCall('adminGetDeposits'),
+      gasAdminCall('adminGetWithdrawals'),
+      gasAdminCall('adminGetTransactions'),
+      gasAdminCall('adminGetOpenPositions'),
+      gasAdminCall('adminGetPositionHistory'),
+      gasAdminCall('adminGetOpenOrders'),
+      gasAdminCall('adminGetEarnContracts'),
+      gasAdminCall('adminGetFunding'),
+    ]);
+
+    // 3) ADMIN_SCRIPT_URL — Team / System / Withdrawals (merged) / Funding balances
+    const [wdq, team, sysStats] = await Promise.allSettled([
+      gasAdminCall('adminGetWithdrawals'),
+      gasAdminCall('adminGetTeamList'),
+      gasAdminCall('adminGetSystemStats'),
+    ]);
+    if (wdq.value?.data)     D.withdrawals  = wdq.value.data.map(x=>({_src:'gas',...x}));
+    if (team.value?.data)    D.teamList     = team.value.data;
+    if (sysStats.value?.data) D.systemStats = sysStats.value.data;
+
+    if (deps.value?.data)  D.deposits    = deps.value.data.map(x=>({_src:'gas',...x}));
+    if (wds.value?.data)   D.withdrawals = wds.value.data.map(x=>({_src:'gas',...x}));
+    if (txs.value?.data)   D.txlog       = txs.value.data;
+    if (pos.value?.data)   D.positions   = pos.value.data;
+    if (posH.value?.data)  D.posHistory  = posH.value.data;
+    if (ords.value?.data)  D.orders      = ords.value.data;
+    if (ec.value?.data)    D.earnContracts = ec.value.data;
+    if (fund.value?.data)  D.funding     = fund.value.data;
+
+  } catch(e) {
+    console.warn('[Admin] loadAll error:', e.message);
+    toast('⚠️ โหลดข้อมูลผิดพลาด: '+e.message,'er');
+  }
+
+  buildRevenue();
+  renderDashboard();
+  rdep(); rwd(); rtx(); rmem(); rpos(); rec(); rrv(); rff();
+  updateBadges(); updateDashStats();
+  toast('✅ โหลดข้อมูลสำเร็จ','ok');
+}
+
+function buildRevenue() {
+  D.revenue = D.members.map(m=>{
+    const pos  = D.posHistory.filter(p=>p.uid===m.BNB_ID||p.uid===String(m.BNB_ID));
+    const opos = D.positions.filter(p=>p.uid===m.BNB_ID||p.uid===String(m.BNB_ID));
+    const ec   = D.earnContracts.filter(c=>c.uid===m.BNB_ID||c.uid===String(m.BNB_ID));
+    const rPnl = pos.reduce((s,p)=>s+parseFloat(p.realized_pnl||0),0);
+    const uPnl = opos.reduce((s,p)=>s+parseFloat(p.unrealized_pnl||0),0);
+    const earnBal = ec.reduce((s,c)=>s+(c.status==='active'?parseFloat(c.current_balance||0):0),0);
+    const wins = pos.filter(p=>parseFloat(p.realized_pnl||0)>0).length;
+    return {
+      BNB_ID:m.BNB_ID, Name:m.Name, Team:m.Team,
+      Trades:pos.length, WinCount:wins,
+      RealizedPnl:rPnl, UnrealizedPnl:uPnl,
+      WalletBalance:parseFloat(m._bal||0),
+      EarnBalance:earnBal||parseFloat(m._earnBal||0),
+    };
+  });
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard() {
+  const actM = D.members.filter(m=>m.Status==='Trading&payments').length;
+  document.getElementById('s-mem').textContent  = fnumInt(D.members.length);
+  document.getElementById('s-memact').textContent = fnumInt(actM)+' Active / '+fnumInt(D.members.length-actM)+' Pending';
+  document.getElementById('s-pos').textContent  = fnumInt(D.positions.length);
+
+  const actEc  = D.earnContracts.filter(c=>c.status==='active').length;
+  const frzEc  = D.earnContracts.filter(c=>c.status==='frozen').length;
+  document.getElementById('s-earn').textContent = fnumInt(D.earnContracts.length);
+  document.getElementById('s-earnact').textContent = fnumInt(actEc)+'A / '+fnumInt(frzEc)+'F';
+
+  const totFund = D.funding.reduce((s,f)=>s+Math.abs(parseFloat(f.amount||0)),0);
+  document.getElementById('s-fund').textContent = fnum(totFund);
+
+  const ss = D.systemStats||{};
+  document.getElementById('s-reserve').textContent   = fnum(ss.platform_reserve||ss.PlatformReserve||0);
+  document.getElementById('s-insurance').textContent = fnum(ss.insurance_fund||ss.InsuranceFund||0);
+  document.getElementById('s-feepool').textContent   = fnum(ss.fee_pool||ss.FeePool||0);
+
+  const rp = D.revenue.filter(r=>r.RealizedPnl>0).reduce((s,r)=>s+r.RealizedPnl,0);
+  const rl = D.revenue.filter(r=>r.RealizedPnl<0).reduce((s,r)=>s+Math.abs(r.RealizedPnl),0);
+  document.getElementById('s-profit').textContent = fnum(rp);
+  document.getElementById('s-loss').textContent   = fnum(rl);
+
+  renderActFeed();
+  renderMemChart();
+  renderDsDep();
+}
+
+function updateDashStats() {
+  const pd = D.deposits.filter(d=>(d.status||'').toLowerCase()==='pending').length;
+  const pw = D.withdrawals.filter(d=>(d.status||'').toLowerCase()==='pending').length;
+  document.getElementById('s-dep').textContent = fnumInt(pd);
+  document.getElementById('s-wd').textContent  = fnumInt(pw);
+  document.getElementById('bdgDep').textContent = pd;
+  document.getElementById('bdgWd').textContent  = pw;
+}
+function updateBadges() { updateDashStats(); }
+
+function renderActFeed() {
+  const items = [
+    ...D.deposits.slice(0,3).map(d=>({t:'dep',ttl:`ฝาก +${fnum(d.amount)} ${d.coin||'USDT'}`,meta:`${d.username||d.uid} · ${fdt(d.created_at)}`})),
+    ...D.withdrawals.slice(0,2).map(d=>({t:'wd', ttl:`ถอน -${fnum(d.amount)} USDT`,meta:`${d.username||d.uid} · ${fdt(d.created_at)}`})),
+    ...D.positions.slice(0,2).map(p=>({t:'tr', ttl:`Position: ${p.symbol} ${p.side?.toUpperCase()||''}`,meta:`${p.username||p.uid} · PnL: ${p.unrealized_pnl}`})),
+    ...D.members.slice(0,2).map(m=>({t:'reg',ttl:`สมาชิก: ${m.Name}`,meta:`Team: ${m.Team||'—'}`})),
+  ].slice(0,8);
+  document.getElementById('actFeed').innerHTML = items.length ? items.map(i=>`
+    <div class="af-item">
+      <div class="af-dot ${i.t}"></div>
+      <div><div class="af-title">${i.ttl}</div><div class="af-meta">${i.meta}</div></div>
+    </div>`).join('') : '<p style="color:var(--t3);font-size:12px;padding:12px 0">ยังไม่มีกิจกรรม</p>';
+}
+
+function renderMemChart() {
+  const el = document.getElementById('memChart');
+  const tot = D.members.length||1;
+  const act = D.members.filter(m=>m.Status==='Trading&payments').length;
+  const pen = D.members.filter(m=>m.Status==='Pending').length;
+  const oth = tot-act-pen;
+  const tms = {}; D.members.forEach(m=>{ if(m.Team) tms[m.Team]=(tms[m.Team]||0)+1; });
+  const topT = Object.entries(tms).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  el.innerHTML = `
+    ${bar('Active',act,tot,'g')}${bar('Pending',pen,tot,'o')}${bar('อื่นๆ',oth,tot,'r')}
+    <div style="height:8px"></div>
+    <div style="font-size:10px;color:var(--t3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Top Teams</div>
+    ${topT.map(([t,n])=>bar(t.length>12?t.slice(0,12)+'…':t,n,tot,'o')).join('')}
+  `;
+}
+const bar=(l,v,t,c)=>`<div class="br-row"><div class="br-lbl">${l}</div><div class="br-trk"><div class="br-fil ${c}" style="width:${Math.round(v/t*100)}%"></div></div><div class="br-num">${v}</div></div>`;
+
+function renderDsDep() {
+  const pend = D.deposits.filter(d=>(d.status||'').toLowerCase()==='pending').slice(0,5);
+  document.getElementById('dsDep').innerHTML = pend.length ? pend.map(d=>`
+    <tr style="cursor:pointer" onclick="vDep(${d.id})">
+      <td><span class="mono" style="color:var(--gold)">${d.uid||'—'}</span><br><span style="font-size:11px;color:var(--t2)">${d.username||'—'}</span></td>
+      <td class="mono" style="color:var(--g)">+${fnum(d.amount)}</td>
+      <td>${d.coin||'USDT'} / ${d.network||'BSC'}</td>
+      <td style="font-size:11px;color:var(--t2)">${fdt(d.created_at)}</td>
+      <td><span class="src ${d._src==='gas'?'gas':'ndb'}">${d._src||'gas'}</span></td>
+      <td onclick="event.stopPropagation()"><button class="ab ok" onclick="appDep(${d.id})">Approve</button><button class="ab no" onclick="rejDep(${d.id})">Reject</button></td>
+    </tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--t3)">ไม่มีรายการรอ Approve</td></tr>';
+}
+
+// ══════════════════════════════════════════
+//  DEPOSITS
+// ══════════════════════════════════════════
+let dpPg=1;
+function rdep() {
+  const q  = (document.getElementById('dpQ')?.value||'').toLowerCase();
+  const st = document.getElementById('dpSt')?.value||'all';
+  const sr = document.getElementById('dpSrc')?.value||'all';
+  const data = D.deposits.filter(d=>{
+    const s = (d.status||'').toLowerCase();
+    const matchQ = !q||(d.uid+'').toLowerCase().includes(q)||(d.username||'').toLowerCase().includes(q)||(d.txid||'').toLowerCase().includes(q);
+    const matchS = st==='all'||s===st;
+    const matchR = sr==='all'||(d._src||'')=== sr;
+    return matchQ&&matchS&&matchR;
+  });
+
+  // update counters
+  const pd = D.deposits.filter(d=>(d.status||'').toLowerCase()==='pending').length;
+  const td = D.deposits.filter(d=>isToday(d.created_at)&&(d.status||'').toLowerCase()==='approved');
+  document.getElementById('dp-pend').textContent = fnumInt(pd);
+  document.getElementById('dp-ok').textContent   = fnumInt(td.length);
+  document.getElementById('dp-amt').textContent  = fnum(td.reduce((s,d)=>s+parseFloat(d.amount||0),0));
+
+  const total=data.length, start=(dpPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('dpTb').innerHTML = rows.length ? rows.map((d,i)=>{
+    const st=(d.status||'pending').toLowerCase();
+    return `<tr style="cursor:pointer" onclick="vDep(${d.id})">
+      <td class="mono" style="color:var(--t3)">${start+i+1}</td>
+      <td><span class="mono" style="color:var(--gold)">${d.uid||'—'}</span><br><span style="font-size:11px;color:var(--t2)">${d.username||'—'}</span></td>
+      <td class="mono" style="color:var(--g);font-weight:600">+${fnum(d.amount)}</td>
+      <td>${d.coin||'USDT'}</td>
+      <td style="font-size:11px">${d.network||'BSC'}</td>
+      <td class="mono" style="font-size:10px;color:var(--t2);max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${d.txid||''}">${d.txid?d.txid.slice(0,14)+'…':'—'}</td>
+      <td style="font-size:11px;color:var(--t2)">${fdt(d.created_at)}</td>
+      <td><span class="src ${d._src==='gas'?'gas':'ndb'}">${d._src||'gas'}</span></td>
+      <td><span class="pill ${st==='approved'?'p-ok':st==='rejected'?'p-no':'p-pend'}">${st==='approved'?'Approved':st==='rejected'?'Rejected':'Pending'}</span></td>
+      <td onclick="event.stopPropagation()">${st==='pending'
+        ?`<button class="ab ok" onclick="appDep(${d.id})">Approve</button><button class="ab no" onclick="rejDep(${d.id})">Reject</button>`
+        :`<button class="ab vi" onclick="vDep(${d.id})">รายละเอียด</button>`}</td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="10" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('dpPg',total,dpPg,p=>{dpPg=p;rdep()});
+}
+
+function appDep(id) {
+  modal('✅ ยืนยันอนุมัติฝากเงิน',
+    `<p style="margin-bottom:12px">อนุมัติรายการนี้ใช่หรือไม่?</p>
+    <div class="mf"><label>หมายเหตุ (ถ้ามี)</label><input id="dn" placeholder="หมายเหตุ..."></div>`,
+    [{l:'Approve',c:'ok',fn:`doAppDep(${id})`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doAppDep(id) {
+  const note = document.getElementById('dn')?.value||'';
+  cm(); const idx=D.deposits.findIndex(d=>d.id===id); if(idx<0) return;
+  D.deposits[idx].status='approved'; D.deposits[idx].note=note;
+  await gasWrite('adminApproveDeposit',{deposit_id:id, note, approved_at:new Date().toISOString()}).catch(()=>{});
+  toast('✅ อนุมัติฝากเงินสำเร็จ','ok');
+  rdep(); renderDsDep(); updateBadges();
+}
+function rejDep(id) {
+  modal('❌ ปฏิเสธการฝากเงิน',
+    `<div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="dr" placeholder="Tx Hash ไม่ถูกต้อง / ยอดไม่ตรง..."></textarea></div>`,
+    [{l:'ยืนยันปฏิเสธ',c:'no',fn:`doRejDep(${id})`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doRejDep(id) {
+  const r=document.getElementById('dr')?.value||'';
+  if(!r.trim()){toast('กรุณาระบุเหตุผล','er');return;}
+  cm(); const idx=D.deposits.findIndex(d=>d.id===id); if(idx<0) return;
+  D.deposits[idx].status='rejected'; D.deposits[idx].note=r;
+  await gasWrite('adminRejectDeposit',{deposit_id:id,note:r}).catch(()=>{});
+  toast('ปฏิเสธรายการฝากเงิน','er');
+  rdep(); renderDsDep(); updateBadges();
+}
+function vDep(id) {
+  const d=D.deposits.find(x=>x.id===id); if(!d) return;
+  modal('📋 รายละเอียดการฝากเงิน',`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${d.uid}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${d.username||'—'}</div></div>
+    <div class="dr"><div class="dk">จำนวน</div><div class="dv" style="color:var(--g)">+${d.amount} ${d.coin||'USDT'}</div></div>
+    <div class="dr"><div class="dk">Network</div><div class="dv">${d.network||'BSC'}</div></div>
+    <div class="dr"><div class="dk">Tx ID</div><div class="dv" style="font-size:10px">${d.txid||'—'}</div></div>
+    <div class="dr"><div class="dk">วันที่</div><div class="dv">${fdt(d.created_at)}</div></div>
+    <div class="dr"><div class="dk">Source</div><div class="dv"><span class="src ${d._src==='gas'?'gas':'ndb'}">${d._src||'gas'}</span></div></div>
+    <div class="dr"><div class="dk">หมายเหตุ</div><div class="dv">${d.note||'—'}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// ══════════════════════════════════════════
+//  WITHDRAWALS
+// ══════════════════════════════════════════
+let wdPg=1;
+function rwd() {
+  const q  = (document.getElementById('wdQ')?.value||'').toLowerCase();
+  const st = document.getElementById('wdSt')?.value||'all';
+  const data = D.withdrawals.filter(d=>{
+    const s=(d.status||'').toLowerCase();
+    const matchQ = !q||(d.uid+'').toLowerCase().includes(q)||(d.username||'').toLowerCase().includes(q)||(d.address||'').toLowerCase().includes(q);
+    return matchQ&&(st==='all'||s===st);
+  });
+  const pw = D.withdrawals.filter(d=>(d.status||'').toLowerCase()==='pending').length;
+  const tw2 = D.withdrawals.filter(d=>isToday(d.created_at)&&(d.status||'').toLowerCase()==='approved');
+  document.getElementById('wd-pend').textContent = fnumInt(pw);
+  document.getElementById('wd-ok').textContent   = fnumInt(tw2.length);
+  document.getElementById('wd-amt').textContent  = fnum(tw2.reduce((s,d)=>s+parseFloat(d.amount||0),0));
+
+  const total=data.length, start=(wdPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('wdTb').innerHTML = rows.length ? rows.map((d,i)=>{
+    const st=(d.status||'pending').toLowerCase();
+    return `<tr style="cursor:pointer" onclick="vWd(${d.id})">
+      <td class="mono" style="color:var(--t3)">${start+i+1}</td>
+      <td><span class="mono" style="color:var(--gold)">${d.uid||'—'}</span><br><span style="font-size:11px;color:var(--t2)">${d.username||'—'}</span></td>
+      <td class="mono" style="color:var(--r);font-weight:600">-${fnum(d.amount)}</td>
+      <td>${d.coin||'USDT'}</td>
+      <td style="font-size:11px">${d.network||'BSC'}</td>
+      <td class="mono" style="font-size:10px;color:var(--t2);max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${d.address||''}">${(d.address||'—').slice(0,14)}…</td>
+      <td class="mono" style="font-size:11px">${fnum(d.fee,4)}</td>
+      <td><span class="pill ${d._source==='WithdrawQueue'?'p-pend':'p-act'}" style="font-size:10px">${d._source||'Withdrawals'}</span></td>
+      <td style="font-size:11px;color:var(--t2)">${fdt(d.created_at)}</td>
+      <td><span class="pill ${st==='approved'?'p-ok':st==='rejected'?'p-no':'p-pend'}">${st==='approved'?'Approved':st==='rejected'?'Rejected':'Pending'}</span></td>
+      <td onclick="event.stopPropagation()">${st==='pending'
+        ?`<button class="ab ok" onclick="appWd(${d.id})">Approve</button><button class="ab no" onclick="rejWd(${d.id})">Reject</button>`
+        :`<button class="ab vi" onclick="vWd(${d.id})">รายละเอียด</button>`}</td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="11" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('wdPg',total,wdPg,p=>{wdPg=p;rwd()});
+}
+
+function appWd(id) {
+  const d=D.withdrawals.find(x=>x.id===id); if(!d) return;
+  modal('✅ ยืนยันอนุมัติถอนเงิน',
+    `<p style="margin-bottom:8px">อนุมัติ <strong style="color:var(--r)">-${d.amount} ${d.coin||'USDT'}</strong> ไปยัง</p>
+    <p class="mono" style="font-size:10px;color:var(--t2);margin-bottom:12px;word-break:break-all">${d.address||'—'}</p>
+    <div class="mf"><label>Tx Hash ที่ส่งออก (ถ้ามี)</label><input id="wtx" placeholder="0x..."></div>
+    <div class="mf"><label>หมายเหตุ</label><input id="wn" placeholder="หมายเหตุ..."></div>`,
+    [{l:'Approve',c:'ok',fn:`doAppWd(${id})`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doAppWd(id) {
+  const txh=document.getElementById('wtx')?.value||'';
+  const note=document.getElementById('wn')?.value||'';
+  cm(); const idx=D.withdrawals.findIndex(d=>d.id===id); if(idx<0) return;
+  Object.assign(D.withdrawals[idx],{status:'approved',txHash:txh,note});
+  await gasWrite('adminApproveWithdrawal',{withdrawal_id:id,tx_hash:txh,note,approved_at:new Date().toISOString()}).catch(()=>{});
+  toast('✅ อนุมัติถอนเงินสำเร็จ','ok');
+  rwd(); updateBadges();
+}
+function rejWd(id) {
+  modal('❌ ปฏิเสธการถอนเงิน',
+    `<div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="wr" placeholder="Wallet Address ไม่ถูกต้อง..."></textarea></div>`,
+    [{l:'ยืนยันปฏิเสธ',c:'no',fn:`doRejWd(${id})`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doRejWd(id) {
+  const r=document.getElementById('wr')?.value||'';
+  if(!r.trim()){toast('กรุณาระบุเหตุผล','er');return;}
+  cm(); const idx=D.withdrawals.findIndex(d=>d.id===id); if(idx<0) return;
+  D.withdrawals[idx].status='rejected'; D.withdrawals[idx].note=r;
+  await gasWrite('adminRejectWithdrawal',{withdrawal_id:id,note:r}).catch(()=>{});
+  toast('ปฏิเสธรายการถอนเงิน','er');
+  rwd(); updateBadges();
+}
+function vWd(id) {
+  const d=D.withdrawals.find(x=>x.id===id); if(!d) return;
+  const st=(d.status||'pending').toLowerCase();
+  const addr=d.address||d.to_address||'';
+  const qrRow = addr
+    ? `<div class="dr"><div class="dk">QR Code</div><div class="dv"><img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(addr)}" style="background:#fff;padding:6px;border-radius:8px" alt="QR"></div></div>`
+    : '';
+  const txnNoteBlock = st==='pending'
+    ? `<div class="mf"><label>Tx Hash ที่ส่งออก (ถ้ามี)</label><input id="wtx" placeholder="0x..." value="${d.txHash||''}"></div>
+       <div class="mf"><label>หมายเหตุ</label><input id="wn" placeholder="หมายเหตุ..." value="${d.note||''}"></div>`
+    : `<div class="dr"><div class="dk">Tx Hash</div><div class="dv" style="font-size:10px">${d.txHash||'—'}</div></div>
+       <div class="dr"><div class="dk">หมายเหตุ</div><div class="dv">${d.note||'—'}</div></div>`;
+  modal('📋 รายละเอียดถอนเงิน',`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${d.uid}</div></div>
+    <div class="dr"><div class="dk">Source</div><div class="dv"><span class="pill ${d._source==='WithdrawQueue'?'p-pend':'p-act'}">${d._source||'Withdrawals'}</span></div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${d.username||'—'}</div></div>
+    <div class="dr"><div class="dk">จำนวน</div><div class="dv" style="color:var(--r)">-${d.amount} ${d.coin||'USDT'}</div></div>
+    <div class="dr"><div class="dk">Network</div><div class="dv">${d.network||'BSC'}</div></div>
+    <div class="dr"><div class="dk">Wallet Address</div><div class="dv" style="font-size:10px;word-break:break-all">${addr||'—'}</div></div>
+    ${qrRow}
+    <div class="dr"><div class="dk">Fee</div><div class="dv">${d.fee||'0'}</div></div>
+    <div class="dr"><div class="dk">วันที่</div><div class="dv">${fdt(d.created_at)}</div></div>
+    ${txnNoteBlock}
+  `,st==='pending'
+    ?[{l:'Approve',c:'ok',fn:`doAppWd(${id})`},{l:'Reject',c:'no',fn:`rejWd(${id})`},{l:'ปิด',c:'can',fn:'cm()'}]
+    :[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// ══════════════════════════════════════════
+//  TX LOG
+// ══════════════════════════════════════════
+let txPg=1;
+function rtx() {
+  const q  = (document.getElementById('txQ')?.value||'').toLowerCase();
+  const ty = document.getElementById('txTy')?.value||'all';
+  const dt = document.getElementById('txDt')?.value||'all';
+  const data = D.txlog.filter(d=>{
+    const matchQ = !q||(d.uid+'').toLowerCase().includes(q)||(d.username||'').toLowerCase().includes(q)||(d.type||'').toLowerCase().includes(q);
+    const matchT = ty==='all'||(d.type||'')=== ty;
+    const matchD = checkDate(d.created_at,dt);
+    return matchQ&&matchT&&matchD;
+  });
+  const total=data.length, start=(txPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('txTb').innerHTML = rows.length ? rows.map(d=>{
+    const amt=String(d.amount||'0');
+    const col=amt.startsWith('+')?'var(--g)':amt.startsWith('-')?'var(--r)':'var(--t1)';
+    const tyc={'Deposit':'p-ok','Withdraw':'p-no','Commission':'p-no','Funding Fee':'p-no','Earn Deposit':'p-pend','Earn Claim':'p-ok','Transfer':'p-act','Spot Trade':'p-act'};
+    return `<tr style="cursor:pointer" onclick="vTx(${d.id})">
+      <td class="mono" style="color:var(--gold)">${d.uid||'—'}</td>
+      <td style="font-size:12px">${d.username||'—'}</td>
+      <td><span class="pill ${tyc[d.type]||'p-act'}">${d.type||'—'}</span></td>
+      <td class="mono">${d.asset||'USDT'}</td>
+      <td class="mono" style="color:${col};font-weight:600">${amt}</td>
+      <td style="font-size:11px;color:var(--t2)">${d.symbol||'—'}</td>
+      <td style="font-size:11px;color:var(--t3);max-width:120px;overflow:hidden;text-overflow:ellipsis">${d.note||'—'}</td>
+      <td style="font-size:11px;color:var(--t2)">${fdt(d.created_at)}</td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('txPg',total,txPg,p=>{txPg=p;rtx()});
+}
+
+// ══════════════════════════════════════════
+//  MEMBERS (NocoDB)
+// ══════════════════════════════════════════
+let memPg=1;
+function rmem() {
+  // populate team select
+  const ts=document.getElementById('memTm');
+  if(ts&&ts.options.length<=1){
+    [...new Set(D.members.map(m=>m.Team).filter(Boolean))].sort()
+      .forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;ts.appendChild(o);});
+  }
+  const q  = (document.getElementById('memQ')?.value||'').toLowerCase();
+  const st = document.getElementById('memSt')?.value||'all';
+  const tm = document.getElementById('memTm')?.value||'all';
+  const data=D.members.filter(m=>{
+    const matchQ=!q||(m.BNB_ID+'').toLowerCase().includes(q)||(m.Name||'').toLowerCase().includes(q)||(m.Team||'').toLowerCase().includes(q)||(m.Phone||'').toLowerCase().includes(q);
+    return matchQ&&(st==='all'||(m.Status||'')=== st)&&(tm==='all'||(m.Team||'')=== tm);
+  });
+  const total=data.length, start=(memPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('memTb').innerHTML = rows.length ? rows.map(m=>{
+    const s=m.Status||'Pending'; const pc=s==='Trading&payments'?'p-trade':'p-pend';
+    const wallet=(m['Address Wallet']||'').slice(0,14);
+    return `<tr style="cursor:pointer" onclick="vMem('${m.BNB_ID}')">
+      <td class="mono" style="color:var(--gold)">${m.BNB_ID}</td>
+      <td>${m.Name||'—'}</td>
+      <td style="font-size:12px;color:var(--t2)">${m.Team||'—'}</td>
+      <td class="mono" style="font-size:11px">${m.Phone||'—'}</td>
+      <td class="mono" style="font-size:10px;color:var(--t2)">${wallet?wallet+'…':'—'}</td>
+      <td class="mono center" style="font-size:11px">${m['Level A']||0}/${m['Level B']||0}</td>
+      <td class="mono" style="font-size:11px;color:var(--t2)">${m.ReferrerId||'—'}</td>
+      <td><span class="pill ${pc}">${s}</span></td>
+      <td onclick="event.stopPropagation()">
+        <button class="ab vi" onclick="vMem('${m.BNB_ID}')">ดู</button>
+        <button class="ab gl" onclick="eMem('${m.BNB_ID}')">แก้ไข</button>
+        <button class="ab" onclick="adjBalance('${m.BNB_ID}')" style="border-color:rgba(240,185,11,.35);color:var(--y)">💰</button>
+        <button class="ab ${s==='Inactive'?'ok':'no'}" onclick="toggleFreeze('${m.BNB_ID}','${s}')">${s==='Inactive'?'🔓':'🔒'}</button>
+      </td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('memPg',total,memPg,p=>{memPg=p;rmem()});
+}
+
+async function vMem(bid) {
+  const m=D.members.find(x=>String(x.BNB_ID)===String(bid)); if(!m) return;
+  const rev=D.revenue.find(r=>String(r.BNB_ID)===String(bid))||{};
+  const ec=D.earnContracts.filter(c=>String(c.uid)===String(bid));
+  const dep=D.deposits.filter(d=>String(d.uid)===String(bid));
+  const wd=D.withdrawals.filter(d=>String(d.uid)===String(bid));
+  let fundingBal = D.funding.filter(f=>String(f.uid)===String(bid)).reduce((s,f)=>s+parseFloat(f.amount||0),0);
+  const fb = await gasAdminCall('adminGetFundingBalance',{uid:bid}).catch(()=>null);
+  if (fb?.data!=null) fundingBal = parseFloat(fb.data.balance ?? fb.data ?? fundingBal) || fundingBal;
+  modal(`👤 ${m.Name}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${m.BNB_ID}</div></div>
+    <div class="dr"><div class="dk">Team</div><div class="dv">${m.Team||'—'}</div></div>
+    <div class="dr"><div class="dk">Phone</div><div class="dv">${m.Phone||'—'}</div></div>
+    <div class="dr"><div class="dk">Wallet</div><div class="dv" style="font-size:10px;word-break:break-all">${m['Address Wallet']||'—'}</div></div>
+    <div class="dr"><div class="dk">Status</div><div class="dv">${m.Status||'—'}</div></div>
+    <div class="dr"><div class="dk">Level A/B</div><div class="dv">${m['Level A']||0}/${m['Level B']||0}</div></div>
+    <div class="dr"><div class="dk">Referrer</div><div class="dv">${m.ReferrerId||'—'}</div></div>
+    <hr style="border-color:var(--border);margin:10px 0">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center">
+      <div><div style="font-size:17px;font-weight:700;color:var(--g)">${dep.filter(d=>d.status==='approved').length}</div><div style="font-size:10px;color:var(--t2)">ฝากสำเร็จ</div></div>
+      <div><div style="font-size:17px;font-weight:700;color:var(--r)">${wd.filter(d=>d.status==='approved').length}</div><div style="font-size:10px;color:var(--t2)">ถอนสำเร็จ</div></div>
+      <div><div style="font-size:17px;font-weight:700;color:var(--y)">${rev.Trades||0}</div><div style="font-size:10px;color:var(--t2)">Trades</div></div>
+      <div><div style="font-size:17px;font-weight:700;color:var(--b)">${ec.length}</div><div style="font-size:10px;color:var(--t2)">Contracts</div></div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="sc" style="margin:0"><div class="sc-lbl">Realized PnL</div><div class="sc-val" style="font-size:16px;color:${(rev.RealizedPnl||0)>=0?'var(--g)':'var(--r)'}">${((rev.RealizedPnl||0)>=0?'+':'')}${fnum(rev.RealizedPnl||0)}</div></div>
+        <div class="sc" style="margin:0"><div class="sc-lbl">Main Balance</div><div class="sc-val" style="font-size:16px">${fnum(m._bal||0)}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="sc" style="margin:0"><div class="sc-lbl">Spot Balance</div><div class="sc-val" style="font-size:14px">${fnum(m._spotBal||0)}</div></div>
+        <div class="sc" style="margin:0"><div class="sc-lbl">Futures Balance</div><div class="sc-val" style="font-size:14px">${fnum(m._futBal||0)}</div></div>
+        <div class="sc" style="margin:0"><div class="sc-lbl">Funding Balance</div><div class="sc-val" style="font-size:14px">${fnum(m._fundingBal||fundingBal||0)}</div></div>
+      </div>
+    </div>
+  `,[
+    {l:'💸 Distribute Profit',c:'pri',fn:`openDistributeProfit('${bid}')`},
+    {l:'ปิด',c:'can',fn:'cm()'}
+  ]);
+}
+
+function eMem(bid) {
+  const m=D.members.find(x=>String(x.BNB_ID)===String(bid)); if(!m) return;
+  modal(`✏️ แก้ไข — ${m.Name}`,`
+    <div class="mf"><label>ชื่อ</label><input id="en" value="${m.Name||''}"></div>
+    <div class="mf"><label>Team</label><input id="et" value="${m.Team||''}"></div>
+    <div class="mf"><label>Phone</label><input id="ep" value="${m.Phone||''}"></div>
+    <div class="mf"><label>Wallet Address</label><input id="ew" value="${m['Address Wallet']||''}"></div>
+    <div class="mf"><label>สถานะ</label>
+      <select id="es">
+        <option ${m.Status==='Trading&payments'?'selected':''}>Trading&payments</option>
+        <option ${m.Status==='Pending'?'selected':''}>Pending</option>
+        <option ${m.Status==='Inactive'?'selected':''}>Inactive</option>
+      </select>
+    </div>
+    <div class="mf"><label>Level A</label><input id="ela" type="number" value="${m['Level A']||0}"></div>
+  `,[{l:'บันทึก',c:'pri',fn:`doEMem('${bid}')`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doEMem(bid) {
+  const m=D.members.find(x=>String(x.BNB_ID)===String(bid)); if(!m) return;
+  const upd={Name:document.getElementById('en')?.value||m.Name,Team:document.getElementById('et')?.value||m.Team,Phone:document.getElementById('ep')?.value||m.Phone,'Address Wallet':document.getElementById('ew')?.value||m['Address Wallet'],Status:document.getElementById('es')?.value||m.Status,'Level A':parseInt(document.getElementById('ela')?.value)||m['Level A']};
+  Object.assign(m,upd); cm();
+  try { await fetch(`${WORKER_URL}/api/members/${m.Id||bid}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(upd)}); } catch(e){}
+  toast('✅ บันทึกข้อมูลสมาชิกสำเร็จ','ok'); rmem();
+}
+
+function openAddMember() {
+  modal('➕ เพิ่มสมาชิกใหม่',`
+    <div class="mf"><label>BNB ID</label><input id="an" placeholder="500000000"></div>
+    <div class="mf"><label>ชื่อ-นามสกุล</label><input id="aname" placeholder="ชื่อ นามสกุล"></div>
+    <div class="mf"><label>Team</label><input id="at" placeholder="Star Cafe"></div>
+    <div class="mf"><label>Phone</label><input id="ap" placeholder="0812345678"></div>
+    <div class="mf"><label>Wallet Address (BNB)</label><input id="aw" placeholder="0x..."></div>
+    <div class="mf"><label>Referrer ID (ถ้ามี)</label><input id="ar"></div>
+  `,[{l:'เพิ่มสมาชิก',c:'pri',fn:'doAddMem()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doAddMem() {
+  const bid=document.getElementById('an')?.value?.trim();
+  const name=document.getElementById('aname')?.value?.trim();
+  if(!bid||!name){toast('กรุณากรอก BNB ID และชื่อ','er');return;}
+  const newM={BNB_ID:bid,Name:name,Team:document.getElementById('at')?.value||'',Phone:document.getElementById('ap')?.value||'','Address Wallet':document.getElementById('aw')?.value||'',Status:'Pending',ReferrerId:document.getElementById('ar')?.value||'','Level A':0,'Level B':0,_bal:'0'};
+  cm();
+  try {
+    await fetch(`${WORKER_URL}/api/members`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({'BNB_ID':bid,'Name':name,'Team':newM.Team,'Phone':newM.Phone,'Address Wallet':newM['Address Wallet'],'Status':'Pending','ReferrerId':newM.ReferrerId})});
+  } catch(e){}
+  D.members.unshift(newM);
+  toast('✅ เพิ่มสมาชิกสำเร็จ','ok'); rmem();
+}
+
+// ══════════════════════════════════════════
+//  POSITIONS
+// ══════════════════════════════════════════
+let posPg=1;
+function updatePosHead() {
+  const ty=document.getElementById('poTy')?.value||'positions';
+  const heads={
+    positions:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Lev</th><th>Size</th><th>Entry Price</th><th>Unrealized PnL</th><th>Margin</th><th>Contract</th></tr>`,
+    orders:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Type</th><th>Size</th><th>Limit Price</th><th>TP</th><th>SL</th><th>Contract</th></tr>`,
+    history:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Lev</th><th>Size</th><th>Entry</th><th>Exit</th><th>Realized PnL</th><th>ROI %</th><th>Duration</th></tr>`,
+  };
+  document.getElementById('poHead').innerHTML = heads[ty]||heads.positions;
+}
+function rpos() {
+  const q  =(document.getElementById('poQ')?.value||'').toLowerCase();
+  const ty =document.getElementById('poTy')?.value||'positions';
+  updatePosHead();
+
+  const src = ty==='positions'?D.positions : ty==='orders'?D.orders : D.posHistory;
+  const data=src.filter(p=>{
+    const s=(p.uid+p.username+p.symbol+p.contract_id).toLowerCase();
+    return !q||s.includes(q);
+  });
+
+  // stats
+  const totUpnl=D.positions.reduce((s,p)=>s+parseFloat(p.unrealized_pnl||0),0);
+  const totMgn =D.positions.reduce((s,p)=>s+parseFloat(p.margin||0),0);
+  document.getElementById('po-cnt').textContent = fnumInt(D.positions.length);
+  document.getElementById('po-ord').textContent = fnumInt(D.orders.length);
+  const upnlEl=document.getElementById('po-upnl');
+  upnlEl.textContent=(totUpnl>=0?'+':'')+fnum(totUpnl);
+  upnlEl.style.color=totUpnl>=0?'var(--g)':'var(--r)';
+  document.getElementById('po-mgn').textContent = fnum(totMgn);
+
+  const total=data.length, start=(posPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('poTb').innerHTML = rows.length ? rows.map(p=>{
+    if(ty==='positions') {
+      const pnl=parseFloat(p.unrealized_pnl||0);
+      return `<tr style="cursor:pointer" onclick="vPos(${p.id})">
+        <td class="mono" style="color:var(--gold)">${p.uid||'—'}</td>
+        <td style="font-size:12px">${p.username||'—'}</td>
+        <td class="mono">${p.symbol||'—'}</td>
+        <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
+        <td class="mono">${p.lev||'—'}x</td>
+        <td class="mono">${p.size||'0'}</td>
+        <td class="mono">${fnum(p.entry_price)}</td>
+        <td class="mono" style="color:${pnl>=0?'var(--g)':'var(--r)'};font-weight:600">${(pnl>=0?'+':'')+fnum(pnl)}</td>
+        <td class="mono">${fnum(p.margin)}</td>
+        <td class="mono" style="font-size:10px;color:var(--t2)">${p.contract_id||'—'}</td>
+      </tr>`;
+    } else if(ty==='orders') {
+      return `<tr style="cursor:pointer" onclick="vOrder(${p.id})">
+        <td class="mono" style="color:var(--gold)">${p.uid||'—'}</td>
+        <td style="font-size:12px">${p.username||'—'}</td>
+        <td class="mono">${p.symbol||'—'}</td>
+        <td><span class="pill ${p.side==='long'||p.side==='Buy'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
+        <td style="font-size:11px;color:var(--t2)">${p.order_type||p.type||'Limit'}</td>
+        <td class="mono">${p.size||'0'}</td>
+        <td class="mono">${fnum(p.limit_price||p.limitPrice)}</td>
+        <td class="mono" style="color:var(--g)">${p.tp_price||p.tp||'—'}</td>
+        <td class="mono" style="color:var(--r)">${p.sl_price||p.sl||'—'}</td>
+        <td class="mono" style="font-size:10px;color:var(--t2)">${p.contract_id||p.earnContractId||'—'}</td>
+      </tr>`;
+    } else {
+      const rp=parseFloat(p.realized_pnl||0);
+      const dur=p.lasting_ms?fDur(p.lasting_ms):(p.opened_at&&p.closed_at?fDur(new Date(p.closed_at)-new Date(p.opened_at)):'—');
+      return `<tr style="cursor:pointer" onclick="vPosHist(${p.id})">
+        <td class="mono" style="color:var(--gold)">${p.uid||'—'}</td>
+        <td style="font-size:12px">${p.username||'—'}</td>
+        <td class="mono">${p.symbol||'—'}</td>
+        <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
+        <td class="mono">${p.lev||'—'}x</td>
+        <td class="mono">${p.size||'0'}</td>
+        <td class="mono">${fnum(p.entry_price)}</td>
+        <td class="mono">${fnum(p.exit_price||p.avg_close)}</td>
+        <td class="mono" style="color:${rp>=0?'var(--g)':'var(--r)'};font-weight:600">${(rp>=0?'+':'')+fnum(rp)}</td>
+        <td class="mono" style="color:${parseFloat(p.roi||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(p.roi||0).toFixed(2)}%</td>
+        <td style="font-size:11px;color:var(--t2)">${dur}</td>
+      </tr>`;
+    }
+  }).join('')
+  : '<tr><td colspan="11" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('poPg',total,posPg,p=>{posPg=p;rpos()});
+}
+
+// ══════════════════════════════════════════
+//  EARN CONTRACTS
+// ══════════════════════════════════════════
+let ecPg=1;
+function rec() {
+  const q  =(document.getElementById('ecQ')?.value||'').toLowerCase();
+  const st =document.getElementById('ecSt')?.value||'all';
+  const data=D.earnContracts.filter(c=>{
+    const s=(c.uid+c.username+c.contract_id).toLowerCase();
+    return (!q||s.includes(q))&&(st==='all'||(c.status||'')=== st);
+  });
+  const act=D.earnContracts.filter(c=>c.status==='active').length;
+  const frz=D.earnContracts.filter(c=>c.status==='frozen').length;
+  const stk=D.earnContracts.reduce((s,c)=>s+parseFloat(c.staked_amount||0),0);
+  const bal=D.earnContracts.filter(c=>c.status==='active').reduce((s,c)=>s+parseFloat(c.current_balance||0),0);
+  document.getElementById('ec-act').textContent = fnumInt(act);
+  document.getElementById('ec-frz').textContent = fnumInt(frz);
+  document.getElementById('ec-stk').textContent = fnum(stk);
+  document.getElementById('ec-bal').textContent = fnum(bal);
+
+  const total=data.length, start=(ecPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('ecTb').innerHTML = rows.length ? rows.map(c=>{
+    const stk2=parseFloat(c.staked_amount||0); const bal2=parseFloat(c.current_balance||0);
+    const dd = stk2>0 ? Math.max(0,((stk2-bal2)/stk2*100)).toFixed(1) : '0.0';
+    const rp=parseFloat(c.realized_pnl||0);
+    const ddColor=parseFloat(dd)>=30?'var(--r)':parseFloat(dd)>=15?'var(--y)':'var(--g)';
+    return `<tr style="cursor:pointer" onclick="vEarnContract('${c.contract_id}')">
+      <td class="mono" style="color:var(--gold)">${c.uid||'—'}</td>
+      <td style="font-size:12px">${c.username||'—'}</td>
+      <td class="mono" style="font-size:10px;color:var(--t2)">${c.contract_id||'—'}</td>
+      <td style="font-size:11px;color:var(--t2)">${c.plan_days||15}D · ${((c.daily_yield_pct||0.3333)*100).toFixed(2)}%/day</td>
+      <td class="mono">${fnum(stk2)}</td>
+      <td class="mono" style="color:${bal2>=stk2?'var(--g)':'var(--t1)'}">${fnum(bal2)}</td>
+      <td class="mono" style="color:${rp>=0?'var(--g)':'var(--r)'}">${(rp>=0?'+':'')+fnum(rp)}</td>
+      <td class="mono" style="color:${ddColor}">${dd}%</td>
+      <td><span class="pill ${c.status==='active'?'p-act':c.status==='frozen'?'p-frz':'p-ok'}">${c.status||'active'}</span></td>
+      <td onclick="event.stopPropagation()">
+        <button class="ab vi" onclick="vEarnContract('${c.contract_id}')">ดู</button>
+        ${c.status==='active'?`<button class="ab no" onclick="liquidateContract('${c.contract_id}')">Liquidate</button>`:''}
+      </td>
+    </tr>`;  }).join('')
+  : '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('ecPg',total,ecPg,p=>{ecPg=p;rec()});
+}
+
+// ══════════════════════════════════════════
+//  REVENUE
+// ══════════════════════════════════════════
+let rvPg=1;
+function rrv() {
+  const q  =(document.getElementById('rvQ')?.value||'').toLowerCase();
+  const so =document.getElementById('rvSo')?.value||'pnl_d';
+  let data=D.revenue.filter(r=>{
+    const s=(r.BNB_ID+r.Name+r.Team).toLowerCase();
+    return !q||s.includes(q);
+  });
+  data.sort((a,b)=>({pnl_d:b.RealizedPnl-a.RealizedPnl,pnl_a:a.RealizedPnl-b.RealizedPnl,tr_d:b.Trades-a.Trades,bal_d:b.WalletBalance-a.WalletBalance})[so]||0);
+
+  const tp=data.filter(r=>r.RealizedPnl>0).reduce((s,r)=>s+r.RealizedPnl,0);
+  const tl=data.filter(r=>r.RealizedPnl<0).reduce((s,r)=>s+Math.abs(r.RealizedPnl),0);
+  const net=tp-tl;
+  document.getElementById('rv-p').textContent = '+'+fnum(tp);
+  document.getElementById('rv-l').textContent = '-'+fnum(tl);
+  const ne=document.getElementById('rv-n');
+  ne.textContent=(net>=0?'+':'')+fnum(net);
+  ne.style.color=net>=0?'var(--g)':'var(--r)';
+  document.getElementById('s-profit').textContent=fnum(tp);
+  document.getElementById('s-loss').textContent=fnum(tl);
+
+  const total=data.length, start=(rvPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('rvTb').innerHTML = rows.length ? rows.map(r=>{
+    const rp=r.RealizedPnl; const wr=r.Trades>0?(r.WinCount/r.Trades*100).toFixed(0):0;
+    const up=r.UnrealizedPnl;
+    return `<tr style="cursor:pointer" onclick="vRevMem('${r.BNB_ID}')">
+      <td class="mono" style="color:var(--gold)">${r.BNB_ID}</td>
+      <td>${r.Name}</td>
+      <td style="font-size:12px;color:var(--t2)">${r.Team||'—'}</td>
+      <td class="mono center">${fnumInt(r.Trades)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="br-trk" style="width:50px"><div class="br-fil ${parseFloat(wr)>=50?'g':'r'}" style="width:${wr}%"></div></div>
+          <span class="mono" style="font-size:11px">${wr}%</span>
+        </div>
+      </td>
+      <td class="mono" style="color:${rp>=0?'var(--g)':'var(--r)'};font-weight:600">${(rp>=0?'+':'')+fnum(rp)}</td>
+      <td class="mono" style="color:${up>=0?'var(--g)':'var(--r)'}">${(up>=0?'+':'')+fnum(up)}</td>
+      <td class="mono">${fnum(r.WalletBalance)}</td>
+      <td class="mono">${fnum(r.EarnBalance)}</td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('rvPg',total,rvPg,p=>{rvPg=p;rrv()});
+}
+
+// ══════════════════════════════════════════
+//  FUNDING FEE
+// ══════════════════════════════════════════
+let ffPg=1;
+function rff() {
+  const q  =(document.getElementById('ffQ')?.value||'').toLowerCase();
+  const dt =document.getElementById('ffDt')?.value||'all';
+  const data=D.funding.filter(f=>{
+    const s=(f.uid+f.username+f.symbol).toLowerCase();
+    return (!q||s.includes(q))&&checkDate(f.created_at,dt);
+  });
+  const tot=data.reduce((s,f)=>s+Math.abs(parseFloat(f.amount||0)),0);
+  document.getElementById('ff-tot').textContent = fnum(tot,4);
+  document.getElementById('ff-cnt').textContent = fnumInt(data.length);
+  document.getElementById('ff-avg').textContent = data.length?fnum(tot/data.length,4):'—';
+
+  const total=data.length, start=(ffPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('ffTb').innerHTML = rows.length ? rows.map(f=>`
+    <tr style="cursor:pointer" onclick="vFunding('${f.id}')">
+      <td class="mono" style="color:var(--gold)">${f.uid||'—'}</td>
+      <td style="font-size:12px">${f.username||'—'}</td>
+      <td class="mono">${f.symbol||'—'}</td>
+      <td class="mono" style="color:var(--r)">-${fnum(Math.abs(parseFloat(f.amount||0)),6)}</td>
+      <td style="font-size:11px;color:var(--t2)">${fdt(f.created_at)}</td>
+    </tr>`).join('')
+  : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  paginate('ffPg',total,ffPg,p=>{ffPg=p;rff()});
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS — TEST
+// ══════════════════════════════════════════
+async function testNDB() {
+  toast('⏳ กำลังทดสอบ NocoDB...','');
+  try {
+    const r=await fetch(`${WORKER_URL}/api/members?limit=1`);
+    const ok=r.ok;
+    document.getElementById('ndbStatus').className='pill '+(ok?'p-ok':'p-no');
+    document.getElementById('ndbStatus').textContent=ok?'✅ เชื่อมต่อสำเร็จ':'❌ เชื่อมต่อไม่ได้';
+    toast(ok?'✅ NocoDB OK':'❌ NocoDB Error '+r.status, ok?'ok':'er');
+  } catch(e) {
+    document.getElementById('ndbStatus').className='pill p-no';
+    document.getElementById('ndbStatus').textContent='❌ '+e.message;
+    toast('❌ NocoDB: '+e.message,'er');
+  }
+}
+
+async function testGAS() {
+  toast('⏳ กำลังทดสอบ GAS...','');
+  try {
+    const r=await gasCall('ping');
+    const ok=r?.status==='ok'||r?.message;
+    document.getElementById('gasStatus').className='pill '+(ok?'p-ok':'p-pend');
+    document.getElementById('gasStatus').textContent=ok?'✅ ตอบสนอง':'⚠️ ตอบกลับแต่ไม่มี admin action';
+    toast(ok?'✅ GAS ตอบสนอง':'⚠️ GAS ตอบกลับ — ต้องเพิ่ม admin actions','');
+  } catch(e) {
+    document.getElementById('gasStatus').className='pill p-no';
+    document.getElementById('gasStatus').textContent='❌ '+e.message;
+    toast('❌ GAS: '+e.message,'er');
+  }
+}
+
+// ══════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════
+function paginate(elId,total,cur,onPg) {
+  const el=document.getElementById(elId); if(!el) return;
+  const tp=Math.ceil(total/PG); if(tp<=1){el.innerHTML='';return;}
+  let h=`<span class="pg-info">รวม ${total} รายการ</span>`;
+  const MAX=5, s=Math.max(1,cur-Math.floor(MAX/2)), e=Math.min(tp,s+MAX-1);
+  if(cur>1)   h+=`<div class="pb" onclick="(${onPg})(${cur-1})">‹</div>`;
+  for(let p=s;p<=e;p++) h+=`<div class="pb${p===cur?' on':''}" onclick="(${onPg})(${p})">${p}</div>`;
+  if(cur<tp)  h+=`<div class="pb" onclick="(${onPg})(${cur+1})">›</div>`;
+  el.innerHTML=h;
+}
+
+const fdt = (dt) => {
+  if(!dt) return '—';
+  try { const d=new Date(dt); return d.toLocaleDateString('th-TH',{day:'2-digit',month:'short',year:'2-digit'})+' '+d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}); } catch(e){return String(dt);}
+};
+
+// ── Number formatter — ใส่ comma หลักพัน ──
+const fnum = (n, dec=2) => {
+  const v = parseFloat(n||0);
+  if(isNaN(v)) return '—';
+  return v.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+};
+// ไม่มีทศนิยม (สำหรับ count / จำนวนเต็ม)
+const fnumInt = (n) => {
+  const v = parseInt(n||0);
+  if(isNaN(v)) return '—';
+  return v.toLocaleString('en-US');
+};
+
+const isToday = dt => { if(!dt) return false; const d=new Date(dt), n=new Date(); return d.toDateString()===n.toDateString(); };
+
+const checkDate = (dt,preset) => {
+  if(!dt||preset==='all') return true;
+  const ms=Date.now()-new Date(dt).getTime();
+  if(preset==='today') return isToday(dt);
+  if(preset==='7d')  return ms<=7*86400000;
+  if(preset==='30d') return ms<=30*86400000;
+  return true;
+};
+
+const fDur = ms => {
+  const s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60), d=Math.floor(h/24);
+  if(d>0) return d+'d '+((h%24))+'h';
+  if(h>0) return h+'h '+(m%60)+'m';
+  return m+'m';
+};
+
+// Modal
+function modal(title,body,actions=[]) {
+  document.getElementById('mTit').textContent=title;
+  document.getElementById('mBdy').innerHTML=body;
+  document.getElementById('mAct').innerHTML=actions.map(a=>`<button class="mb ${a.c}" onclick="${a.fn}">${a.l}</button>`).join('');
+  document.getElementById('mOv').classList.add('on');
+}
+function cm() { document.getElementById('mOv').classList.remove('on'); }
+document.getElementById('mOv').addEventListener('click',e=>{if(e.target===e.currentTarget)cm();});
+
+// Toast
+let _tT;
+function toast(msg,type='') {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='on'+(type?' '+type:'');
+  clearTimeout(_tT); _tT=setTimeout(()=>el.classList.remove('on'),3000);
+}
+
+// Clock
+function startClock() {
+  setInterval(()=>{ document.getElementById('clock').textContent=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); },1000);
+}
+
+// Auto refresh every 30s
+function startAuto() {
+  clearInterval(_autoTimer);
+  _autoTimer=setInterval(loadAll, 30000);
+}
+
+// Mobile
+function initMobile() {
+  const mob = window.innerWidth <= 680;
+  const sb  = document.getElementById('sb');
+  const mm  = document.getElementById('mobMenu');
+  if (mob) {
+    sb.classList.add('col');
+    mm.style.display = 'flex';
+    document.getElementById('sbIco').innerHTML = '<polyline points="9 18 15 12 9 6"/>';
+  } else {
+    mm.style.display = 'none';
+    document.getElementById('sbOverlay').style.display = 'none';
+  }
+}
+initMobile();
+window.addEventListener('resize', initMobile);
+
+// ══════════════════════════════════════════
+//  ROW POPUP FUNCTIONS
+// ══════════════════════════════════════════
+
+// TX Log popup
+function vTx(id) {
+  const d=D.txlog.find(x=>x.id==id); if(!d) return;
+  const amt=String(d.amount||'0');
+  const col=amt.startsWith('+')?'var(--g)':amt.startsWith('-')?'var(--r)':'var(--t1)';
+  modal('📋 รายละเอียดธุรกรรม',`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${d.uid||'—'}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${d.username||'—'}</div></div>
+    <div class="dr"><div class="dk">ประเภท</div><div class="dv">${d.type||'—'}</div></div>
+    <div class="dr"><div class="dk">Asset</div><div class="dv">${d.asset||'USDT'}</div></div>
+    <div class="dr"><div class="dk">จำนวน</div><div class="dv" style="color:${col};font-weight:700">${amt}</div></div>
+    <div class="dr"><div class="dk">Symbol/Network</div><div class="dv">${d.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">หมายเหตุ</div><div class="dv">${d.note||'—'}</div></div>
+    <div class="dr"><div class="dk">เวลา</div><div class="dv">${fdt(d.created_at)}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// Position popup (Open)
+function vPos(id) {
+  const p=D.positions.find(x=>x.id==id); if(!p) return;
+  const pnl=parseFloat(p.unrealized_pnl||0);
+  modal(`📈 Position — ${p.symbol||'—'}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${p.uid||'—'}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${p.username||'—'}</div></div>
+    <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${p.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
+    <div class="dr"><div class="dk">Leverage</div><div class="dv mono">${p.lev||'—'}x</div></div>
+    <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
+    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fnum(p.entry_price)}</div></div>
+    <div class="dr"><div class="dk">Unrealized PnL</div><div class="dv mono" style="color:${pnl>=0?'var(--g)':'var(--r)'};font-weight:700">${(pnl>=0?'+':'')+fnum(pnl)}</div></div>
+    <div class="dr"><div class="dk">Margin</div><div class="dv mono">${fnum(p.margin)}</div></div>
+    <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${p.contract_id||'—'}</div></div>
+    <div class="dr"><div class="dk">เปิดเมื่อ</div><div class="dv">${fdt(p.opened_at)}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// Order popup
+function vOrder(id) {
+  const p=D.orders.find(x=>x.id==id); if(!p) return;
+  modal(`📋 Order — ${p.symbol||'—'}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${p.uid||'—'}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${p.username||'—'}</div></div>
+    <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${p.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'||p.side==='Buy'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
+    <div class="dr"><div class="dk">Order Type</div><div class="dv">${p.order_type||p.type||'Limit'}</div></div>
+    <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
+    <div class="dr"><div class="dk">Limit Price</div><div class="dv mono">${fnum(p.limit_price||p.limitPrice)}</div></div>
+    <div class="dr"><div class="dk">Take Profit</div><div class="dv mono" style="color:var(--g)">${p.tp_price||p.tp||'—'}</div></div>
+    <div class="dr"><div class="dk">Stop Loss</div><div class="dv mono" style="color:var(--r)">${p.sl_price||p.sl||'—'}</div></div>
+    <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${p.contract_id||p.earnContractId||'—'}</div></div>
+    <div class="dr"><div class="dk">สร้างเมื่อ</div><div class="dv">${fdt(p.created_at)}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// Position History popup
+function vPosHist(id) {
+  const p=D.posHistory.find(x=>x.id==id); if(!p) return;
+  const rp=parseFloat(p.realized_pnl||0);
+  const dur=p.lasting_ms?fDur(p.lasting_ms):(p.opened_at&&p.closed_at?fDur(new Date(p.closed_at)-new Date(p.opened_at)):'—');
+  modal(`📊 Position History — ${p.symbol||'—'}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${p.uid||'—'}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${p.username||'—'}</div></div>
+    <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${p.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
+    <div class="dr"><div class="dk">Leverage</div><div class="dv mono">${p.lev||'—'}x</div></div>
+    <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
+    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fnum(p.entry_price)}</div></div>
+    <div class="dr"><div class="dk">Exit Price</div><div class="dv mono">${fnum(p.exit_price||p.avg_close)}</div></div>
+    <div class="dr"><div class="dk">Realized PnL</div><div class="dv mono" style="color:${rp>=0?'var(--g)':'var(--r)'};font-weight:700">${(rp>=0?'+':'')+fnum(rp)}</div></div>
+    <div class="dr"><div class="dk">ROI</div><div class="dv mono" style="color:${parseFloat(p.roi||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(p.roi||0).toFixed(2)}%</div></div>
+    <div class="dr"><div class="dk">Duration</div><div class="dv">${dur}</div></div>
+    <div class="dr"><div class="dk">เปิดเมื่อ</div><div class="dv">${fdt(p.opened_at)}</div></div>
+    <div class="dr"><div class="dk">ปิดเมื่อ</div><div class="dv">${fdt(p.closed_at)}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// Revenue member popup — แสดง full stats
+function vRevMem(bid) {
+  const r=D.revenue.find(x=>String(x.BNB_ID)===String(bid));
+  if(!r) { vMem(bid); return; }
+  const pos=D.posHistory.filter(p=>String(p.uid)===String(bid));
+  const wins=pos.filter(p=>parseFloat(p.realized_pnl||0)>0).length;
+  const losses=pos.length-wins;
+  const wr=pos.length>0?(wins/pos.length*100).toFixed(1):0;
+  const bestTrade=pos.reduce((best,p)=>parseFloat(p.realized_pnl||0)>parseFloat(best.realized_pnl||0)?p:best,{realized_pnl:0});
+  const worstTrade=pos.reduce((worst,p)=>parseFloat(p.realized_pnl||0)<parseFloat(worst.realized_pnl||0)?p:worst,{realized_pnl:0});
+  modal(`📊 รายได้ — ${r.Name}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${r.BNB_ID}</div></div>
+    <div class="dr"><div class="dk">Team</div><div class="dv">${r.Team||'—'}</div></div>
+    <hr style="border-color:var(--border);margin:8px 0">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:10px">
+      <div class="sc" style="margin:0"><div class="sc-lbl">เทรดทั้งหมด</div><div class="sc-val" style="font-size:18px">${fnumInt(r.Trades)}</div></div>
+      <div class="sc green" style="margin:0"><div class="sc-lbl">ชนะ</div><div class="sc-val" style="font-size:18px;color:var(--g)">${fnumInt(wins)}</div></div>
+      <div class="sc red" style="margin:0"><div class="sc-lbl">แพ้</div><div class="sc-val" style="font-size:18px;color:var(--r)">${fnumInt(losses)}</div></div>
+    </div>
+    <div class="dr"><div class="dk">Win Rate</div><div class="dv mono" style="color:${parseFloat(wr)>=50?'var(--g)':'var(--r)'};font-weight:700">${wr}%</div></div>
+    <div class="dr"><div class="dk">Realized PnL</div><div class="dv mono" style="color:${r.RealizedPnl>=0?'var(--g)':'var(--r)'};font-weight:700">${(r.RealizedPnl>=0?'+':'')+fnum(r.RealizedPnl)}</div></div>
+    <div class="dr"><div class="dk">Unrealized PnL</div><div class="dv mono" style="color:${r.UnrealizedPnl>=0?'var(--g)':'var(--r)'}">${(r.UnrealizedPnl>=0?'+':'')+fnum(r.UnrealizedPnl)}</div></div>
+    <div class="dr"><div class="dk">Wallet Balance</div><div class="dv mono">${fnum(r.WalletBalance)}</div></div>
+    <div class="dr"><div class="dk">Earn Balance</div><div class="dv mono">${fnum(r.EarnBalance)}</div></div>
+    ${bestTrade.symbol?`<div class="dr"><div class="dk">Best Trade</div><div class="dv mono" style="color:var(--g)">${bestTrade.symbol} +${fnum(bestTrade.realized_pnl)}</div></div>`:''}
+    ${worstTrade.symbol?`<div class="dr"><div class="dk">Worst Trade</div><div class="dv mono" style="color:var(--r)">${worstTrade.symbol} ${fnum(worstTrade.realized_pnl)}</div></div>`:''}
+  `,[
+    {l:'ดูโปรไฟล์สมาชิก',c:'pri',fn:`vMem('${bid}')`},
+    {l:'💸 Distribute Profit',c:'ok',fn:`openDistributeProfit('${bid}')`},
+    {l:'ปิด',c:'can',fn:'cm()'}
+  ]);
+}
+
+// Funding Fee popup
+function vFunding(id) {
+  const f=D.funding.find(x=>String(x.id)===String(id)); if(!f) return;
+  modal('📋 Funding Fee',`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${f.uid||'—'}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${f.username||'—'}</div></div>
+    <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${f.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">จำนวน</div><div class="dv mono" style="color:var(--r);font-weight:700">-${fnum(Math.abs(parseFloat(f.amount||0)),6)} ${f.asset||'USDT'}</div></div>
+    <div class="dr"><div class="dk">เวลา</div><div class="dv">${fdt(f.created_at)}</div></div>
+  `,[{l:'ปิด',c:'can',fn:'cm()'}]);
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') cm(); });
+document.getElementById('lkPass').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+// ══════════════════════════════════════════
+//  👥 TEAM MANAGEMENT
+// ══════════════════════════════════════════
+function rteam() {
+  const data = D.teamList||[];
+  document.getElementById('teamTb').innerHTML = data.length ? data.map(t=>`
+    <tr>
+      <td><span style="color:var(--gold);font-weight:600">${t.team_name||t.Team||'—'}</span><br><span style="font-size:11px;color:var(--t2)">${t.name||t.Name||'—'}</span></td>
+      <td class="mono">${t.bnb_id||t.BNB_ID||'—'}</td>
+      <td>${t.role||t.Role||'—'}</td>
+      <td class="mono" style="color:var(--g);font-weight:600">${fnum(t.commission_balance||t.CommissionBalance||0)}</td>
+      <td class="mono">${fnum(t.total_paid||t.TotalPaid||0)}</td>
+      <td>
+        <button class="ab vi" onclick='openUpsertTeam(${JSON.stringify(t).replace(/'/g,"&#39;")})'>แก้ไข</button>
+        <button class="ab ok" onclick="openWdTeamComm('${t.bnb_id||t.BNB_ID||''}','${t.team_name||t.Team||''}')">ถอน Commission</button>
+      </td>
+    </tr>`).join('')
+  : '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล — กด รีเฟรช เพื่อดึงข้อมูลจาก adminGetTeamList</td></tr>';
+}
+
+function openUpsertTeam(t) {
+  t = t || {};
+  modal(t.bnb_id||t.BNB_ID ? '✏️ แก้ไข Team Member' : '➕ เพิ่ม Team Member', `
+    <div class="mf"><label>BNB ID</label><input id="tm-bid" value="${t.bnb_id||t.BNB_ID||''}" placeholder="500000000"></div>
+    <div class="mf"><label>ชื่อ</label><input id="tm-name" value="${t.name||t.Name||''}" placeholder="ชื่อ-นามสกุล"></div>
+    <div class="mf"><label>Team</label><input id="tm-team" value="${t.team_name||t.Team||''}" placeholder="Star Cafe"></div>
+    <div class="mf"><label>Role</label><input id="tm-role" value="${t.role||t.Role||''}" placeholder="Leader / Member"></div>
+    <div class="mf"><label>Commission Balance</label><input id="tm-comm" type="number" step="0.01" value="${t.commission_balance||t.CommissionBalance||0}"></div>
+  `, [{l:'บันทึก',c:'pri',fn:'doUpsertTeam()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doUpsertTeam() {
+  const bid  = document.getElementById('tm-bid')?.value?.trim()||'';
+  const name = document.getElementById('tm-name')?.value?.trim()||'';
+  const team = document.getElementById('tm-team')?.value?.trim()||'';
+  const role = document.getElementById('tm-role')?.value?.trim()||'';
+  const comm = parseFloat(document.getElementById('tm-comm')?.value||0);
+  if(!bid||!name){ toast('กรุณากรอก BNB ID และชื่อ','er'); return; }
+  cm();
+  const res = await gasWrite('adminUpsertTeamMember',{ bnb_id:bid, name, team_name:team, role, commission_balance:comm });
+  if(res?.status==='ok'||!res) toast('✅ บันทึก Team Member สำเร็จ','ok');
+  else toast('⚠️ GAS: '+res?.message,'');
+  rteam();
+}
+
+function openWdTeamComm(bid, teamName) {
+  modal('💸 ถอน Commission ของทีม', `
+    <div class="dr"><div class="dk">Team</div><div class="dv">${teamName||'—'}</div></div>
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv mono" style="color:var(--gold)">${bid}</div></div>
+    <div class="mf"><label>จำนวน (USDT)</label><input id="twc-amt" type="number" step="0.01" min="0" placeholder="0.00"></div>
+    <div class="mf"><label>หมายเหตุ</label><input id="twc-note" placeholder="ถอน commission..."></div>
+  `, [{l:'ยืนยันถอน',c:'pri',fn:`doWdTeamComm('${bid}')`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doWdTeamComm(bid) {
+  const amt  = parseFloat(document.getElementById('twc-amt')?.value||0);
+  const note = document.getElementById('twc-note')?.value?.trim()||'';
+  if(!amt||amt<=0){ toast('กรุณาระบุจำนวนที่ถูกต้อง','er'); return; }
+  cm();
+  const res = await gasWrite('adminWithdrawTeamCommission',{ bnb_id:bid, amount:amt, note, withdrawn_at:new Date().toISOString() });
+  if(res?.status==='ok'||!res) toast('✅ ถอน Commission สำเร็จ','ok');
+  else toast('⚠️ GAS: '+res?.message,'');
+  rteam();
+}
+
+// ══════════════════════════════════════════
+//  🏦 SYSTEM CENTER & RESERVE FUND
+// ══════════════════════════════════════════
+function rsystem() {
+  const ss = D.systemStats||{};
+  document.getElementById('sys-reserve').textContent   = fnum(ss.platform_reserve||ss.PlatformReserve||0);
+  document.getElementById('sys-insurance').textContent = fnum(ss.insurance_fund||ss.InsuranceFund||0);
+  document.getElementById('sys-feepool').textContent   = fnum(ss.fee_pool||ss.FeePool||0);
+  document.getElementById('sysStatsRaw').textContent   = JSON.stringify(ss, null, 2);
+}
+
+function openAdjSystemBalance() {
+  modal('⚙️ ปรับยอด System Balance', `
+    <div class="mf"><label>กองทุน</label>
+      <select id="sb-type">
+        <option value="platform_reserve">Platform Reserve</option>
+        <option value="insurance_fund">Insurance Fund</option>
+        <option value="fee_pool">Fee Pool</option>
+      </select>
+    </div>
+    <div class="mf"><label>การปรับ</label>
+      <select id="sb-op">
+        <option value="add">เพิ่ม (+)</option>
+        <option value="sub">ลด (−)</option>
+        <option value="set">กำหนดค่าตรงๆ (=)</option>
+      </select>
+    </div>
+    <div class="mf"><label>จำนวน (USDT)</label><input id="sb-amt" type="number" step="0.01" min="0" placeholder="0.00"></div>
+    <div class="mf"><label>หมายเหตุ (บังคับ)</label><input id="sb-note" placeholder="ปรับยอดเนื่องจาก..."></div>
+  `, [{l:'ยืนยันปรับยอด',c:'pri',fn:'doAdjSystemBalance()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doAdjSystemBalance() {
+  const fund = document.getElementById('sb-type')?.value||'platform_reserve';
+  const op   = document.getElementById('sb-op')?.value||'add';
+  const amt  = parseFloat(document.getElementById('sb-amt')?.value||0);
+  const note = document.getElementById('sb-note')?.value?.trim()||'';
+  if(!amt||amt<=0){ toast('กรุณาระบุจำนวนที่ถูกต้อง','er'); return; }
+  if(!note){ toast('กรุณาระบุหมายเหตุ','er'); return; }
+  cm();
+  const res = await gasWrite('adminAdjustSystemBalance',{ fund, op, amount:amt, note, adjusted_at:new Date().toISOString() });
+  if(res?.status==='ok'||!res) toast('✅ ปรับยอด System Balance สำเร็จ','ok');
+  else toast('⚠️ GAS: '+res?.message,'');
+  const sst = await gasAdminCall('adminGetSystemStats');
+  if(sst?.data) D.systemStats = sst.data;
+  rsystem(); renderDashboard();
+}
+
+// ══════════════════════════════════════════
+//  💸 DISTRIBUTE PROFIT (Admin Test)
+// ══════════════════════════════════════════
+function openDistributeProfit(bid) {
+  modal('💸 แจกกำไร (Distribute Profit) — ทดสอบ', `
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv mono" style="color:var(--gold)">${bid}</div></div>
+    <div class="mf"><label>จำนวน (USDT)</label><input id="dp-amt" type="number" step="0.01" placeholder="0.00"></div>
+    <div class="mf"><label>บัญชี</label>
+      <select id="dp-account">
+        <option value="main">Main Balance</option>
+        <option value="spot">Spot Balance</option>
+        <option value="futures">Futures Balance</option>
+        <option value="funding">Funding Balance</option>
+      </select>
+    </div>
+    <div class="mf"><label>หมายเหตุ</label><input id="dp-note" placeholder="แจกกำไรทดสอบ..."></div>
+  `, [{l:'ยืนยันแจกกำไร',c:'pri',fn:`doDistributeProfit('${bid}')`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+
+async function doDistributeProfit(bid) {
+  const amt     = parseFloat(document.getElementById('dp-amt')?.value||0);
+  const account = document.getElementById('dp-account')?.value||'main';
+  const note    = document.getElementById('dp-note')?.value?.trim()||'';
+  if(!amt){ toast('กรุณาระบุจำนวน','er'); return; }
+  cm();
+  const res = await gasWrite('adminDistributeProfit',{ uid:bid, amount:amt, account, note, distributed_at:new Date().toISOString() });
+  if(res?.status==='ok'||!res) toast('✅ แจกกำไรสำเร็จ','ok');
+  else toast('⚠️ GAS: '+res?.message,'');
+  rmem(); buildRevenue(); rrv();
+}
+
+// ══════════════════════════════════════════
+//  💰 BALANCE ADJUSTMENT
+// ══════════════════════════════════════════
+function openBalAdj() {
+  modal('💰 ปรับ Balance สมาชิก',`
+    <div class="mf"><label>BNB ID หรือ UID</label><input id="ba-uid" placeholder="500000000" oninput="baLookup()"></div>
+    <div id="ba-info" style="font-size:12px;color:var(--t2);min-height:18px;margin-bottom:8px"></div>
+    <div class="mf"><label>Field ที่ต้องการปรับ</label>
+      <select id="ba-field">
+        <option value="main_balance">main_balance (กระเป๋าหลัก)</option>
+        <option value="funding_balance">funding_balance (กระเป๋า Funding)</option>
+        <option value="futures_balance">futures_balance (กระเป๋า Futures)</option>
+        <option value="earn_balance">earn_balance (กระเป๋า Earn)</option>
+      </select>
+    </div>
+    <div class="mf"><label>ประเภท</label>
+      <select id="ba-type">
+        <option value="add">เพิ่ม Balance (+)</option>
+        <option value="sub">ลด Balance (−)</option>
+        <option value="set">กำหนดค่าตรงๆ (=)</option>
+      </select>
+    </div>
+    <div class="mf"><label>จำนวน (USDT)</label><input id="ba-amt" type="number" placeholder="0.00" step="0.01" min="0"></div>
+    <div class="mf"><label>เหตุผล (บังคับ)</label><input id="ba-note" placeholder="ปรับ balance เนื่องจาก..."></div>
+  `,[{l:'ยืนยันปรับ Balance',c:'pri',fn:'doAdjBalance()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+function adjBalance(bid) {
+  openBalAdj();
+  setTimeout(()=>{ const el=document.getElementById('ba-uid'); if(el){el.value=bid;baLookup();} },50);
+}
+function baLookup() {
+  const uid=document.getElementById('ba-uid')?.value?.trim()||'';
+  const m=D.members.find(x=>String(x.BNB_ID)===uid);
+  const el=document.getElementById('ba-info');
+  if(el) el.textContent = m ? `✅ ${m.Name} | Team: ${m.Team||'—'} | Balance: ${fnum(m._bal||0)} USDT` : uid?'⚠️ ไม่พบสมาชิก':'';
+}
+async function doAdjBalance() {
+  const uid   = document.getElementById('ba-uid')?.value?.trim()||'';
+  const field = document.getElementById('ba-field')?.value||'main_balance';
+  const type  = document.getElementById('ba-type')?.value||'add';
+  const amt   = parseFloat(document.getElementById('ba-amt')?.value||0);
+  const note  = document.getElementById('ba-note')?.value?.trim()||'';
+  if(!uid)           { toast('กรุณาระบุ BNB ID','er'); return; }
+  if(!amt||amt<=0)   { toast('กรุณาระบุจำนวนที่ถูกต้อง','er'); return; }
+  if(!note)          { toast('กรุณาระบุเหตุผล','er'); return; }
+  const m=D.members.find(x=>String(x.BNB_ID)===uid);
+  if(!m)             { toast('ไม่พบสมาชิก: '+uid,'er'); return; }
+
+  const oldBal=parseFloat(m._bal||0);
+  const newBal = type==='add'?oldBal+amt : type==='sub'?Math.max(0,oldBal-amt) : amt;
+  cm();
+  m._bal=newBal.toFixed(2);
+
+  const res=await gasWrite('adminAdjustBalance',{ uid, field, type, amount:amt, new_balance:newBal, note, old_balance:oldBal });
+  if(res?.status==='ok'||!res) {
+    toast(`✅ Balance ปรับแล้ว: ${oldBal.toFixed(2)} → ${newBal.toFixed(2)} USDT`,'ok');
+  } else {
+    toast('⚠️ GAS: '+res?.message+' (local updated)','');
+  }
+  rmem(); buildRevenue(); rrv();
+}
+
+// ══════════════════════════════════════════
+//  🔒 FREEZE / UNFREEZE ACCOUNT
+// ══════════════════════════════════════════
+function openFreezeDialog() {
+  modal('🔒 Freeze / Unfreeze Account',`
+    <div class="mf"><label>BNB ID</label><input id="fz-uid" placeholder="500000000"></div>
+    <div class="mf"><label>Action</label>
+      <select id="fz-action">
+        <option value="Inactive">🔒 Freeze (ระงับบัญชี)</option>
+        <option value="Trading&payments">🔓 Unfreeze (ปลดล็อค)</option>
+      </select>
+    </div>
+    <div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="fz-note" placeholder="ระงับเนื่องจาก..."></textarea></div>
+  `,[{l:'ยืนยัน',c:'no',fn:'doToggleFreeze()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+function toggleFreeze(bid, currentStatus) {
+  const newStatus = currentStatus==='Inactive'?'Trading&payments':'Inactive';
+  const action    = newStatus==='Inactive'?'Freeze':'Unfreeze';
+  const m = D.members.find(x=>String(x.BNB_ID)===String(bid));
+  modal(`${newStatus==='Inactive'?'🔒 Freeze':'🔓 Unfreeze'} — ${m?.Name||bid}`,`
+    <p style="margin-bottom:12px">ยืนยัน <strong style="color:${newStatus==='Inactive'?'var(--r)':'var(--g)'}">${action}</strong> บัญชี <strong>${m?.Name||bid}</strong>?</p>
+    <div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="fz2-note" placeholder="${newStatus==='Inactive'?'พบการทุจริต / ละเมิดกฎ...':'ตรวจสอบแล้ว ปลดล็อคได้...'}"></textarea></div>
+  `,[{l:action,c:newStatus==='Inactive'?'no':'ok',fn:`doFreezeConfirm('${bid}','${newStatus}')`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doFreezeConfirm(bid, newStatus) {
+  const note = document.getElementById('fz2-note')?.value?.trim()||'';
+  if(!note){ toast('กรุณาระบุเหตุผล','er'); return; }
+  cm();
+  const m=D.members.find(x=>String(x.BNB_ID)===String(bid));
+  if(m) m.Status=newStatus;
+  try {
+    await fetch(`${WORKER_URL}/api/members/${m?.Id||bid}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({Status:newStatus,note})});
+  } catch(e){}
+  await gasWrite('adminUpdateMemberStatus',{uid:bid,status:newStatus,note}).catch(()=>{});
+  toast(`${newStatus==='Inactive'?'🔒 Freeze':'🔓 Unfreeze'} สำเร็จ: ${m?.Name||bid}`,'ok');
+  rmem();
+}
+async function doToggleFreeze() {
+  const uid    = document.getElementById('fz-uid')?.value?.trim()||'';
+  const action = document.getElementById('fz-action')?.value||'Inactive';
+  const note   = document.getElementById('fz-note')?.value?.trim()||'';
+  if(!uid)  { toast('กรุณาระบุ BNB ID','er'); return; }
+  if(!note) { toast('กรุณาระบุเหตุผล','er'); return; }
+  await doFreezeConfirm(uid, action);
+}
+
+// ══════════════════════════════════════════
+//  ⚠️ FORCE CLOSE ALL POSITIONS
+// ══════════════════════════════════════════
+function forceCloseAll() {
+  const q    = (document.getElementById('poQ')?.value||'').toLowerCase();
+  const scope= q ? `เฉพาะที่ filter: "${q}"` : 'ทุก Position ที่ยังเปิดอยู่';
+  const cnt  = q ? D.positions.filter(p=>(p.uid+p.symbol).toLowerCase().includes(q)).length : D.positions.length;
+  if(!cnt){ toast('ไม่มี Position ที่จะปิด',''); return; }
+  modal('⚠️ Force Close Positions',`
+    <div style="background:var(--rbg);border:1px solid rgba(246,70,93,.3);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+      <div style="color:var(--r);font-weight:700;margin-bottom:4px">⚠️ คำเตือน — การกระทำนี้ไม่สามารถย้อนกลับได้</div>
+      <div style="font-size:12px;color:var(--t2)">จะปิด <strong style="color:var(--t1)">${cnt} positions</strong> (${scope}) ทันที</div>
+    </div>
+    <div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="fc-note" placeholder="ปิด position ฉุกเฉินเนื่องจาก..."></textarea></div>
+    <div class="mf"><label>พิมพ์ CONFIRM เพื่อยืนยัน</label><input id="fc-confirm" placeholder="CONFIRM"></div>
+  `,[{l:`Force Close ${cnt} Positions`,c:'no',fn:'doForceClose()'},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doForceClose() {
+  const confirm2 = document.getElementById('fc-confirm')?.value?.trim();
+  const note     = document.getElementById('fc-note')?.value?.trim()||'';
+  if(confirm2!=='CONFIRM'){ toast('กรุณาพิมพ์ CONFIRM เพื่อยืนยัน','er'); return; }
+  if(!note){ toast('กรุณาระบุเหตุผล','er'); return; }
+  cm();
+  const q = (document.getElementById('poQ')?.value||'').toLowerCase();
+  const targets = q ? D.positions.filter(p=>(p.uid+p.symbol).toLowerCase().includes(q)) : [...D.positions];
+  const ids = targets.map(p=>p.id);
+  D.positions = D.positions.filter(p=>!ids.includes(p.id));
+  // Push ไปยัง GAS
+  const res = await gasWrite('adminForceClosePositions',{ position_ids:ids, note, closed_at:new Date().toISOString() });
+  toast(`✅ Force close ${ids.length} positions สำเร็จ`,'ok');
+  rpos(); renderDashboard();
+}
+
+// ══════════════════════════════════════════
+//  🔒 EARN CONTRACT MANAGEMENT
+// ══════════════════════════════════════════
+function vEarnContract(contractId) {
+  const c=D.earnContracts.find(x=>x.contract_id===contractId); if(!c) return;
+  const stk=parseFloat(c.staked_amount||0), bal=parseFloat(c.current_balance||0);
+  const dd=stk>0?((stk-bal)/stk*100).toFixed(2):'0.00';
+  modal(`📋 Earn Contract — ${c.contract_id}`,`
+    <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${c.uid}</div></div>
+    <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${c.username||'—'}</div></div>
+    <div class="dr"><div class="dk">Contract ID</div><div class="dv" style="font-size:11px">${c.contract_id}</div></div>
+    <div class="dr"><div class="dk">Plan</div><div class="dv">${c.plan_days||15} วัน · ${((c.daily_yield_pct||0.3333)*100).toFixed(4)}%/วัน</div></div>
+    <div class="dr"><div class="dk">Staked</div><div class="dv">${fnum(stk)} USDT</div></div>
+    <div class="dr"><div class="dk">Current Balance</div><div class="dv" style="color:${bal>=stk?'var(--g)':'var(--r)'}">${fnum(bal)} USDT</div></div>
+    <div class="dr"><div class="dk">Realized PnL</div><div class="dv" style="color:${parseFloat(c.realized_pnl||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(c.realized_pnl||0)>=0?'+':''}${fnum(c.realized_pnl||0)}</div></div>
+    <div class="dr"><div class="dk">Drawdown</div><div class="dv" style="color:${parseFloat(dd)>=30?'var(--r)':parseFloat(dd)>=15?'var(--y)':'var(--g)'}">${dd}%</div></div>
+    <div class="dr"><div class="dk">Status</div><div class="dv"><span class="pill ${c.status==='active'?'p-act':'p-frz'}">${c.status}</span></div></div>
+    <div class="dr"><div class="dk">เริ่มต้น</div><div class="dv">${c.start_time_ms?new Date(c.start_time_ms).toLocaleString('th-TH'):'—'}</div></div>
+  `,[
+    c.status==='active'?{l:'⚠️ Liquidate Contract',c:'no',fn:`liquidateContract('${contractId}')`}:{l:'ดู Only',c:'can',fn:'cm()'},
+    {l:'ปิด',c:'can',fn:'cm()'}
+  ]);
+}
+function liquidateContract(contractId) {
+  const c=D.earnContracts.find(x=>x.contract_id===contractId); if(!c) return;
+  modal(`⚠️ Liquidate Contract — ${contractId}`,`
+    <div style="background:var(--rbg);border:1px solid rgba(246,70,93,.3);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+      <div style="color:var(--r);font-weight:700;margin-bottom:4px">จะ Liquidate contract นี้ทันที</div>
+      <div style="font-size:12px;color:var(--t2)">สมาชิก: <strong>${c.username||c.uid}</strong> | Balance: <strong>${parseFloat(c.current_balance||0).toFixed(2)} USDT</strong> จะถูก freeze</div>
+    </div>
+    <div class="mf"><label>เหตุผล (บังคับ)</label><textarea id="liq-note" placeholder="Drawdown เกิน 30% / ละเมิดกฎ..."></textarea></div>
+  `,[{l:'ยืนยัน Liquidate',c:'no',fn:`doLiquidate('${contractId}')`},{l:'ยกเลิก',c:'can',fn:'cm()'}]);
+}
+async function doLiquidate(contractId) {
+  const note=document.getElementById('liq-note')?.value?.trim()||'';
+  if(!note){ toast('กรุณาระบุเหตุผล','er'); return; }
+  cm();
+  const idx=D.earnContracts.findIndex(c=>c.contract_id===contractId); if(idx<0) return;
+  D.earnContracts[idx].status='frozen';
+  await gasWrite('adminLiquidateEarnContract',{contract_id:contractId,note,liquidated_at:new Date().toISOString()}).catch(()=>{});
+  toast(`⚠️ Liquidate contract สำเร็จ: ${contractId}`,'ok');
+  rec(); renderDashboard();
+}
+
+// ══════════════════════════════════════════
+//  ⬇️ EXPORT CSV
+// ══════════════════════════════════════════
+function exportCSV(type) {
+  const sources = {
+    members:     { data:D.members,     fields:['BNB_ID','Name','Team','Phone','Status','Level A','Level B','ReferrerId','_bal','_earnBal'] },
+    deposits:    { data:D.deposits,    fields:['id','uid','username','coin','network','amount','txid','status','note','created_at'] },
+    withdrawals: { data:D.withdrawals, fields:['id','uid','username','coin','network','amount','address','fee','status','tx_hash','note','created_at'] },
+    positions:   { data:D.positions,   fields:['id','uid','username','symbol','side','lev','entry_price','size','unrealized_pnl','margin','status','contract_id','opened_at'] },
+    txlog:       { data:D.txlog,       fields:['id','uid','username','type','asset','amount','symbol','note','created_at'] },
+    funding:     { data:D.funding,     fields:['id','uid','username','symbol','amount','asset','created_at'] },
+    revenue:     { data:D.revenue,     fields:['BNB_ID','Name','Team','Trades','WinCount','RealizedPnl','UnrealizedPnl','WalletBalance','EarnBalance'] },
+  };
+  const src = sources[type];
+  if(!src||!src.data.length){ toast('ไม่มีข้อมูล',''); return; }
+
+  const { data, fields } = src;
+  const header = fields.join(',');
+  const rows   = data.map(row =>
+    fields.map(f => {
+      let v = row[f]===undefined||row[f]===null?'' : row[f];
+      if(typeof v==='string'&&(v.includes(',')||v.includes('"')||v.includes('\n')))
+        v = '"' + v.replace(/"/g,'""') + '"';
+      return v;
+    }).join(',')
+  );
+  const csv  = '\uFEFF' + [header, ...rows].join('\n'); // BOM for Thai Excel
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `tcc_admin_${type}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`✅ Export ${type} CSV สำเร็จ (${data.length} รายการ)`,'ok');
+}
+</script>
+</body>
+</html>
