@@ -381,7 +381,7 @@ tr:hover td{background:var(--bgh)}
     <p style="font-size:11px;color:var(--t2);text-align:center">
       ยังไม่มีบัญชี? <a href="javascript:void(0)" onclick="showLockState('signup')" style="color:var(--goldb)">สมัครสมาชิก</a>
     </p>
-    <p style="font-size:10px;color:var(--t3)">TCC Admin v4.1 · sync Main v6.4-COMM2 · Email+Password+OTP · GAS Backend</p>
+    <p style="font-size:10px;color:var(--t3)">TCC Admin v4.2 · sync Main v6.4-COMM2 · Easy v8.4-RZPNL · Email+Password+OTP · GAS Backend</p>
   </div>
 
   <!-- STATE: SIGNUP -->
@@ -483,7 +483,7 @@ tr:hover td{background:var(--bgh)}
       <div class="sb-sec">การเทรด</div>
       <div class="si" onclick="go('positions')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <span class="lbl">Positions / Orders</span>
+        <span class="lbl">Positions / Orders (Futures-Contract)</span>
       </div>
       <div class="si" onclick="go('earncontracts')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -491,7 +491,7 @@ tr:hover td{background:var(--bgh)}
       </div>
       <div class="si" onclick="go('futures')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        <span class="lbl">Futures Direct / Loans</span>
+        <span class="lbl">Futures-Direct / Loans</span>
       </div>
       <div class="sb-sec">รายงาน</div>
       <div class="si" onclick="go('revenue')">
@@ -501,6 +501,14 @@ tr:hover td{background:var(--bgh)}
       <div class="si" onclick="go('fundingfee')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
         <span class="lbl">Funding Fee Log</span>
+      </div>
+      <div class="si" onclick="go('ledger')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+        <span class="lbl">Commission Ledger</span>
+      </div>
+      <div class="si" onclick="go('reqlog')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="lbl">Request Log</span>
       </div>
       <div class="sb-sec">ระบบ</div>
       <div class="si" onclick="go('supportchat');schAdminInit()">
@@ -565,12 +573,12 @@ tr:hover td{background:var(--bgh)}
         <div class="sg" id="dsStat">
           <div class="sc gold"><div class="sc-lbl">สมาชิกทั้งหมด</div><div class="sc-val" id="s-mem">—</div><div class="sc-sub" id="s-memact">GAS</div></div>
           <div class="sc green"><div class="sc-lbl">ฝาก รอ Approve</div><div class="sc-val" id="s-dep">—</div><div class="sc-sub">Manual / GAS</div></div>
-          <div class="sc red"><div class="sc-lbl">ถอน รอ Approve</div><div class="sc-val" id="s-wd">—</div><div class="sc-sub">GAS</div></div>
+          <div class="sc red"><div class="sc-lbl">ถอน รอ Approve</div><div class="sc-val" id="s-wd">—</div><div class="sc-sub">รอ Admin ดำเนินการ</div></div>
           <div class="sc blue"><div class="sc-lbl">Open Positions</div><div class="sc-val" id="s-pos">—</div><div class="sc-sub">GAS</div></div>
-          <div class="sc green"><div class="sc-lbl">กำไรรวม (Realized)</div><div class="sc-val" id="s-profit">—</div><div class="sc-sub">USDT</div></div>
-          <div class="sc red"><div class="sc-lbl">ขาดทุนรวม</div><div class="sc-val" id="s-loss">—</div><div class="sc-sub">USDT</div></div>
-          <div class="sc"><div class="sc-lbl">Earn Contracts</div><div class="sc-val" id="s-earn">—</div><div class="sc-sub" id="s-earnact">active/frozen</div></div>
-          <div class="sc"><div class="sc-lbl">Funding Fee (รวม)</div><div class="sc-val" id="s-fund">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc green"><div class="sc-lbl">กำไรรวม (Realized)</div><div class="sc-val" id="s-profit">—</div><div class="sc-sub">USDT · รวมระดับเทรด</div></div>
+          <div class="sc red"><div class="sc-lbl">ขาดทุนรวม</div><div class="sc-val" id="s-loss">—</div><div class="sc-sub">USDT · รวมระดับเทรด</div></div>
+          <div class="sc"><div class="sc-lbl">Earn Contracts (ยังไม่ปิด)</div><div class="sc-val" id="s-earn">—</div><div class="sc-sub" id="s-earnact">active/frozen</div></div>
+          <div class="sc"><div class="sc-lbl">Funding Fee (สุทธิ)</div><div class="sc-val" id="s-fund">—</div><div class="sc-sub">USDT · ตามเครื่องหมายในชีต</div></div>
           <div class="sc gold"><div class="sc-lbl">Platform Reserve</div><div class="sc-val" id="s-reserve">—</div><div class="sc-sub">USDT</div></div>
           <div class="sc blue"><div class="sc-lbl">Insurance Fund</div><div class="sc-val" id="s-insurance">—</div><div class="sc-sub">USDT</div></div>
           <div class="sc green"><div class="sc-lbl">Fee Pool</div><div class="sc-val" id="s-feepool">—</div><div class="sc-sub">USDT</div></div>
@@ -635,15 +643,14 @@ tr:hover td{background:var(--bgh)}
             <div class="sum-card-icon">💰</div>
             <div class="sum-card-body">
               <div class="sum-card-title">มูลค่ารวม (วันนี้)</div>
-              <div class="sum-card-val" id="dp-amt">—</div>
-              <div class="sum-card-sub">USDT</div>
+              <div class="sum-card-val" id="dp-amt">—</div> <div class="sum-card-sub" id="dp-amt-sub">USDT</div>
             </div>
           </div>
           <!-- คอลัมน์ 5: ยอดรวมทั้งหมด -->
           <div class="sum-card sum-card-total">
             <div class="sum-card-icon">📥</div>
             <div class="sum-card-body">
-              <div class="sum-card-title">ยอดฝากรวม (ทั้งหมด)</div>
+              <div class="sum-card-title">ยอดฝากรวม USDT (ทั้งหมด)</div>
               <div class="sum-card-val" id="dp-total-amt">—</div>
               <div class="sum-card-sub" id="dp-total-cnt">— รายการ</div>
             </div>
@@ -764,14 +771,13 @@ tr:hover td{background:var(--bgh)}
             <div class="sum-card-icon">💸</div>
             <div class="sum-card-body">
               <div class="sum-card-title">มูลค่ารวม (วันนี้)</div>
-              <div class="sum-card-val" id="wd-amt">—</div>
-              <div class="sum-card-sub">USDT</div>
+              <div class="sum-card-val" id="wd-amt">—</div> <div class="sum-card-sub" id="wd-amt-sub">USDT</div>
             </div>
           </div>
           <div class="sum-card sum-card-total">
             <div class="sum-card-icon">📤</div>
             <div class="sum-card-body">
-              <div class="sum-card-title">ยอดถอนรวม (ทั้งหมด)</div>
+              <div class="sum-card-title">ยอดถอนรวม USDT (ทั้งหมด)</div>
               <div class="sum-card-val" id="wd-total-amt">—</div>
               <div class="sum-card-sub" id="wd-total-cnt">— รายการ</div>
             </div>
@@ -883,7 +889,7 @@ tr:hover td{background:var(--bgh)}
           </select>
         </div>
         <div class="tw">
-          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>ประเภท</th><th>Asset</th><th>จำนวน</th><th>Symbol/Network</th><th>หมายเหตุ</th><th>เวลา</th></tr></thead>
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>ประเภท</th><th>Asset</th><th>จำนวน</th><th>Symbol/Network</th><th>Account</th><th>Contract</th><th>หมายเหตุ</th><th>เวลา</th></tr></thead>
           <tbody id="txTb"></tbody></table>
           <div class="pg" id="txPg"></div>
         </div>
@@ -928,7 +934,8 @@ tr:hover td{background:var(--bgh)}
           <input class="fi" id="poQ" placeholder="🔍 BNB ID / ชื่อ / Symbol / Contract ID..." oninput="rpos(true)">
           <select class="fs" id="poTy" onchange="rpos(true);updatePosHead()">
             <option value="positions">Open Positions</option>
-            <option value="orders">Open Orders</option>
+            <option value="orders">Open Orders (Pending)</option>
+            <option value="orderhist">Order History (Filled/Cancelled)</option>
             <option value="history">Position History</option>
           </select>
         </div>
@@ -945,10 +952,10 @@ tr:hover td{background:var(--bgh)}
       <!-- ════ EARN CONTRACTS ════ -->
       <div class="panel" id="p-earncontracts">
         <div class="sg sg-4">
-          <div class="sc blue"><div class="sc-lbl">Active Contracts</div><div class="sc-val" id="ec-act">—</div><div class="sc-sub">สัญญา</div></div>
-          <div class="sc red"><div class="sc-lbl">Frozen Contracts</div><div class="sc-val" id="ec-frz">—</div><div class="sc-sub">สัญญา</div></div>
-          <div class="sc gold"><div class="sc-lbl">Staked รวม</div><div class="sc-val" id="ec-stk">—</div><div class="sc-sub">USDT</div></div>
-          <div class="sc"><div class="sc-lbl">Balance รวม</div><div class="sc-val" id="ec-bal">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc blue"><div class="sc-lbl">Active Contracts</div><div class="sc-val" id="ec-act">—</div><div class="sc-sub">สัญญา · ทั้งระบบ</div></div>
+          <div class="sc red"><div class="sc-lbl">Frozen Contracts</div><div class="sc-val" id="ec-frz">—</div><div class="sc-sub">สัญญา · ทั้งระบบ</div></div>
+          <div class="sc gold"><div class="sc-lbl">Staked รวม</div><div class="sc-val" id="ec-stk">—</div><div class="sc-sub">USDT · ที่ยังไม่ปิด</div></div>
+          <div class="sc"><div class="sc-lbl">Balance รวม</div><div class="sc-val" id="ec-bal">—</div><div class="sc-sub">USDT · ที่ยังไม่ปิด</div></div>
         </div>
         <div class="fb">
           <input class="fi" id="ecQ" placeholder="🔍 BNB ID / Contract ID..." oninput="rec(true)">
@@ -979,6 +986,7 @@ tr:hover td{background:var(--bgh)}
             <option value="ord">Futures Orders</option>
             <option value="loans">Loans</option>
             <option value="coins">Spot Coin Balances</option>
+            <option value="trades">Trades (Contract + Direct)</option>
           </select>
         </div>
         <div class="fb-act"><button class="fb-btn" onclick="exportCSV('futures')">⬇ CSV</button></div>
@@ -1014,12 +1022,12 @@ tr:hover td{background:var(--bgh)}
       <!-- ════ FUNDING FEE ════ -->
       <div class="panel" id="p-fundingfee">
         <div class="sg sg-3">
-          <div class="sc red"><div class="sc-lbl">Funding Fee ทั้งหมด</div><div class="sc-val" id="ff-tot">—</div><div class="sc-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">Funding Fee สุทธิ</div><div class="sc-val" id="ff-tot">—</div><div class="sc-sub" id="ff-sub">USDT</div></div>
           <div class="sc"><div class="sc-lbl">รายการ</div><div class="sc-val" id="ff-cnt">—</div><div class="sc-sub">entries</div></div>
           <div class="sc gold"><div class="sc-lbl">Avg/รายการ</div><div class="sc-val" id="ff-avg">—</div><div class="sc-sub">USDT</div></div>
         </div>
         <div class="fb">
-          <input class="fi" id="ffQ" placeholder="🔍 BNB ID / Symbol..." oninput="rff(true)">
+          <input class="fi" id="ffQ" placeholder="🔍 BNB ID / Symbol / Contract ID..." oninput="rff(true)">
           <select class="fs" id="ffDt" onchange="rff(true)">
             <option value="all">ทุกช่วงเวลา</option>
             <option value="today">วันนี้</option>
@@ -1028,9 +1036,52 @@ tr:hover td{background:var(--bgh)}
           </select>
         </div>
         <div class="tw">
-          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>จำนวน (USDT)</th><th>เวลา</th></tr></thead>
+          <table><thead><tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Contract</th><th>จำนวน (USDT)</th><th>เวลา</th></tr></thead>
           <tbody id="ffTb"></tbody></table>
           <div class="pg" id="ffPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ COMMISSION LEDGER [v4.2] — GAS adminGetCommissionLedger (finance / owner) ════ -->
+      <div class="panel" id="p-ledger">
+        <div class="sg sg-3">
+          <div class="sc green"><div class="sc-lbl">เข้า (+) รวม</div><div class="sc-val" id="cl-in">—</div><div class="sc-sub" id="cl-in-sub">USDT</div></div>
+          <div class="sc red"><div class="sc-lbl">ออก (−) รวม</div><div class="sc-val" id="cl-out">—</div><div class="sc-sub" id="cl-out-sub">USDT</div></div>
+          <div class="sc"><div class="sc-lbl">รายการ</div><div class="sc-val" id="cl-cnt">—</div><div class="sc-sub" id="cl-cnt-sub">ตามตัวกรอง</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="clQ" placeholder="🔍 BNB ID / Contract ID / Source UID / หมายเหตุ..." oninput="rledger(true)">
+          <select class="fs" id="clTy" onchange="rledger(true)"><option value="all">ทุกประเภท</option></select>
+          <select class="fs" id="clDt" onchange="rledger(true)">
+            <option value="all">ทุกช่วงเวลา</option><option value="today">วันนี้</option><option value="7d">7 วัน</option><option value="30d">30 วัน</option>
+          </select>
+        </div>
+        <div class="fb-act"><button class="fb-btn" onclick="exportCSV('ledger')">⬇ CSV</button></div>
+        <div class="tw">
+          <table><thead><tr><th>เวลา</th><th>BNB ID</th><th>ชื่อ</th><th>ประเภท</th><th>จำนวน</th><th>Contract</th><th>Source UID</th><th>หมายเหตุ</th></tr></thead>
+          <tbody id="clTb"></tbody></table>
+          <div class="pg" id="clPg"></div>
+        </div>
+      </div>
+
+      <!-- ════ REQUEST LOG [v4.2] — GAS adminGetRequestLog (ops / owner · อ่านอย่างเดียว) ════ -->
+      <div class="panel" id="p-reqlog">
+        <div class="sg sg-4">
+          <div class="sc"><div class="sc-lbl">ทั้งหมด</div><div class="sc-val" id="rl-all">—</div><div class="sc-sub">แถว (ล่าสุด 500)</div></div>
+          <div class="sc gold"><div class="sc-lbl">Pending</div><div class="sc-val" id="rl-pend">—</div><div class="sc-sub">ค้าง</div></div>
+          <div class="sc red"><div class="sc-lbl">Failed</div><div class="sc-val" id="rl-fail">—</div><div class="sc-sub">รายการ</div></div>
+          <div class="sc blue"><div class="sc-lbl">Uncertain</div><div class="sc-val" id="rl-unc">—</div><div class="sc-sub">ต้องตรวจมือ</div></div>
+        </div>
+        <div class="fb">
+          <input class="fi" id="rlQ" placeholder="🔍 BNB ID / Action / req_key / Error..." oninput="rreqlog(true)">
+          <select class="fs" id="rlSt" onchange="rreqlog(true)">
+            <option value="all">ทุกสถานะ</option><option value="pending">pending</option><option value="done">done</option><option value="failed">failed</option><option value="uncertain">uncertain</option>
+          </select>
+        </div>
+        <div class="tw">
+          <table><thead><tr><th>เวลา</th><th>BNB ID</th><th>Action</th><th>Status</th><th>req_key</th><th>Error</th></tr></thead>
+          <tbody id="rlTb"></tbody></table>
+          <div class="pg" id="rlPg"></div>
         </div>
       </div>
 
@@ -1102,6 +1153,19 @@ tr:hover td{background:var(--bgh)}
           <button class="fb-btn" onclick="openAdjSystemBalance()">⚙️ ปรับยอด System Balance</button>
           <button class="fb-btn" onclick="rsystem()">🔄 รีเฟรช</button>
         </div>
+        <div class="card" id="mainToolsCard" style="display:none">
+          <div class="ctitle">🛠️ Main Tools (เฉพาะ Owner · ผ่าน GAS Admin → GAS Main)</div>
+          <div style="font-size:11px;color:var(--t3);margin-bottom:8px">รันเครื่องมือซ่อมข้อมูลของ GAS Main · ปุ่ม "ทดลอง" = dry-run ไม่เขียนข้อมูล · ปุ่ม "รันจริง" จะถามยืนยันก่อน</div>
+          <div class="fb-act" style="flex-wrap:wrap;gap:6px">
+            <input class="fi" id="mtUid" placeholder="BNB ID (ไม่ใส่ = ทั้งหมด)" style="max-width:200px">
+            <button class="fb-btn danger" onclick="runMainTool('repairFuturesRealizedPnl',false)">Futures Realized PNL (รันจริง)</button>
+            <button class="fb-btn" onclick="runMainTool('repairFuturesLiqPrices',true)">Futures Liq Price (ทดลอง)</button>
+            <button class="fb-btn danger" onclick="runMainTool('repairFuturesLiqPrices',false)">Futures Liq Price (รันจริง)</button>
+            <button class="fb-btn" onclick="runMainTool('auditEarnClaims',true)">Audit Earn Claims (ทดลอง)</button>
+            <button class="fb-btn danger" onclick="runMainTool('auditEarnClaims',false)">Audit Earn Claims (รันจริง)</button>
+          </div>
+          <pre id="mtOut" style="font-size:11px;color:var(--t2);white-space:pre-wrap;word-break:break-all;margin-top:8px"></pre>
+        </div>
         <div class="card">
           <div class="ctitle">📋 ข้อมูล System Stats (ดิบ)</div>
           <pre id="sysStatsRaw" style="font-size:11px;color:var(--t2);white-space:pre-wrap;word-break:break-all"></pre>
@@ -1131,7 +1195,7 @@ tr:hover td{background:var(--bgh)}
           </div>
           <div class="card">
             <div class="ctitle">📋 ข้อมูลระบบ</div>
-            <div class="dr"><div class="dk">Admin Version</div><div class="dv">v4.1 Admin Manager · sync Main v6.4-COMM2</div></div>
+            <div class="dr"><div class="dk">Admin Version</div><div class="dv">v4.2 Admin Manager · sync Main v6.4-COMM2 · Easy v8.4-RZPNL</div></div>
             <div class="dr"><div class="dk">เข้าระบบเมื่อ</div><div class="dv" id="loginAt">—</div></div>
             <div class="dr" id="adminMgrRow" style="display:none"><div class="dk">จัดการแอดมิน / สิทธิ์</div><div class="dv"><button class="ab vi" onclick="go('admins')">เปิดหน้าจัดการแอดมิน (owner)</button></div></div>
             <div class="dr"><div class="dk">Auto Refresh</div><div class="dv">ทุก 30 วินาที</div></div>
@@ -1250,7 +1314,8 @@ const D = {
   revenue:    [],  // built from members + GAS stats
   teamList:   [],  // GAS: adminGetTeamList
   systemStats:{},  // GAS: adminGetSystemStats
-  futPos:[], futOrd:[], loans:[], spotCoins:[], // v3: FuturesPositions / FuturesOrders / Loans / SpotCoinBalances
+  futPos:[], futOrd:[], loans:[], spotCoins:[], trades:[], ledger:[], reqLog:[], // v4.2: Trades / CommissionLedger / RequestLog
+   // v3: FuturesPositions / FuturesOrders / Loans / SpotCoinBalances
 };
 
 let pages = {};
@@ -1266,6 +1331,9 @@ let _pendingEmail = ''; // อีเมลที่กำลังรอ OTP (lo
 // ── [v4.0] ROLE / SESSION TOKEN — คีย์กลางถูกถอดออกจากหน้านี้แล้ว · สิทธิ์ตัวจริงบังคับที่ GAS (ที่นี่แค่ซ่อนเมนู/แจ้งผู้ใช้) ──
 let _adminToken = sessionStorage.getItem('tcc_admin_token') || '';
 let _role  = sessionStorage.getItem('tcc_admin_role') || '';
+// [FIX-DASH v1] action ที่ role นี้ไม่มีสิทธิ์โหลด → การ์ดบน Dashboard แสดง "—" แทน 0 / cache mark price ใช้ร่วมกันทุกหน้า
+let _denied = new Set();
+const MARK = { map:{}, ts:0 };
 // [v4.1] state ของหน้าจัดการแอดมิน (ประกาศไว้ด้านบนกัน TDZ ตอน restoreSession)
 let _admList = [], _admMe = { email:'', role:'' }, _admBoot = false, _admBadgeTimer = null, _admPendPrev = null;
 let _perms = [];
@@ -1274,8 +1342,8 @@ const _ROLE_LABEL = { owner:'L4 Owner', finance:'L3 Finance', ops:'L2 Ops/Tradin
 const _KB_MENU = 'kbmenu', _KB_PERM = 'adminKbSession';
 const _ROLE_MENUS = {
   owner:   null, // ทุกเมนู
-  finance: ['dashboard','search','deposits','withdrawals','txlog','members','revenue','team','settings'],
-  ops:     ['dashboard','search','txlog','members','positions','earncontracts','futures','fundingfee','supportchat','settings'],
+  finance: ['dashboard','search','deposits','withdrawals','txlog','members','revenue','team','ledger','settings'],
+  ops:     ['dashboard','search','txlog','members','positions','earncontracts','futures','fundingfee','reqlog','supportchat','settings'],
   support: ['search','members','supportchat','settings'],
 };
 const _AUTH_NOTOKEN = ['adminSignup','adminLogin','adminVerifyOtp','adminRequestUnlock','adminUnlock','adminChangePassword','ping'];
@@ -1310,6 +1378,7 @@ function applyRoleUI(){
     while (n && !n.classList.contains('sb-sec')) { if (n.classList.contains('si') && n.style.display!=='none') any = true; n = n.nextElementSibling; }
     sec.style.display = any ? '' : 'none';
   });
+  const mtc = document.getElementById('mainToolsCard'); if (mtc) mtc.style.display = (_role==='owner') ? '' : 'none';   // [v4.2] Main Tools = owner เท่านั้น
   const mgr = document.getElementById('adminMgrRow');
   if (mgr) mgr.style.display = (_role==='owner') ? '' : 'none';
   const first = allow ? allow[0] : 'dashboard';
@@ -1517,13 +1586,14 @@ const pgTitles = {
   dashboard:'Dashboard — ภาพรวม', search:'ค้นหา BNB ID / Contract ID',
   deposits:'อนุมัติฝากเงิน',
   withdrawals:'อนุมัติถอนเงิน',   txlog:'รายการธุรกรรม (GAS)',
-  members:'สมาชิก (GAS — Members+Users)', positions:'Positions & Orders (GAS)',
+  members:'สมาชิก (GAS — Members+Users)', positions:'Positions & Orders — Futures-Contract (GAS)',
   earncontracts:'Earn Contracts (GAS)', revenue:'รายได้สมาชิก',
   fundingfee:'Funding Fee Log (GAS)', settings:'ตั้งค่า / API Config',
   team:'Team Management', system:'System Center & Reserve Fund',
-  futures:'Futures Direct / Loans / Spot Coins (GAS)',
+  futures:'Futures-Direct / Loans / Spot Coins (GAS)',
   supportchat:'แชทซัพพอร์ต (สมาชิก ↔ ทีมซัพพอร์ต)',
   kbmenu:'จัดการเมนูถามตอบ (FAQ)',
+  ledger:'Commission Ledger (GAS)', reqlog:'Request Log (GAS · อ่านอย่างเดียว)',
   admins:'จัดการแอดมิน / อนุมัติ / สิทธิ์',
 };
 
@@ -1538,7 +1608,7 @@ function go(id) {
   // lazy render
   const rmap = {deposits:rdep,withdrawals:rwd,txlog:rtx,members:rmem,
     positions:()=>{rpos();updatePosHead()},earncontracts:rec,
-    revenue:rrv,fundingfee:rff,team:rteam,system:rsystem,futures:()=>rfx(true),admins:radmins};
+    revenue:rrv,fundingfee:rff,team:rteam,system:rsystem,futures:()=>rfx(true),admins:radmins,ledger:()=>rledger(true),reqlog:()=>rreqlog(true)};
   if (rmap[id]) rmap[id]();
 }
 
@@ -1634,10 +1704,11 @@ async function gasWrite(action, data={}) {
 async function loadAll() {
   toast('🔄 กำลังโหลดข้อมูล...','');
   // [v4.0] โหลดเฉพาะ action ที่ role นี้มีสิทธิ์ (ข้อมูลที่ไม่มีสิทธิ์ = ว่าง ไม่ยิงให้ GAS ปฏิเสธ/บันทึก adminDenied รัวๆ)
-  const C = (a,p)=> can(a) ? gasAdminCall(a,p) : Promise.resolve(null);
+  _denied = new Set();
+  const C = (a,p)=> can(a) ? gasAdminCall(a,p) : (_denied.add(a), Promise.resolve(null));
   try {
     // โหลดทุก API พร้อมกัน — members + ข้อมูลอื่นๆ ทั้งหมดในคราวเดียว (ไม่มี race condition)
-    const [memRes, deps, wds, txs, pos, posH, ords, ec, fund, refs, team, sysStats, fPos, fOrd, lns, sCoins] =
+    const [memRes, deps, wds, txs, pos, posH, ords, ec, fund, refs, team, sysStats, fPos, fOrd, lns, sCoins, trd, cled, rlog] =
       await Promise.allSettled([
         C('adminGetMembers', { limit: 5000 }),
         C('adminGetDeposits', { status: 'all' }),
@@ -1655,10 +1726,15 @@ async function loadAll() {
         C('adminGetFuturesOrders'),
         C('adminGetLoans'),
         C('adminGetSpotCoins'),
+        C('adminGetTrades', { limit: 1000 }),   // [v4.2] Trades (position_id / contract_id)
+        C('adminGetCommissionLedger', { limit: 2000 }),   // [v4.2] finance / owner
+        C('adminGetRequestLog', { limit: 500 }),          // [v4.2] ops / owner
       ]);
 
     // map members (PascalCase legacy fields)
     const memRows = memRes.value?.data?.rows || [];
+    const memTotal = memRes.value?.data?.total;
+    if (memTotal > memRows.length) toast('⚠️ โหลดสมาชิกได้ '+fnumInt(memRows.length)+' จาก '+fnumInt(memTotal)+' — ตัวเลขสรุปอาจไม่ครบ','er');
     D.members = memRows.map(m => ({
       BNB_ID:           m.uid,
       Name:             m.name,
@@ -1699,6 +1775,9 @@ async function loadAll() {
     if (fOrd.value?.data)   D.futOrd    = fOrd.value.data;
     if (lns.value?.data)    D.loans     = lns.value.data;
     if (sCoins.value?.data) D.spotCoins = sCoins.value.data;
+    if (trd.value?.data)    D.trades    = trd.value.data;
+    if (cled.value?.data)   D.ledger    = cled.value.data;
+    if (rlog.value?.data)   D.reqLog    = rlog.value.data;
 
     // ── ตรวจ GAS call ล้มเหลวสำหรับ positions/orders — แจ้งเตือนทันที ──
     const posErr  = pos.status  === 'rejected' || !pos.value?.data;
@@ -1716,6 +1795,7 @@ async function loadAll() {
     toast('⚠️ โหลดข้อมูลผิดพลาด: '+e.message,'er');
   }
 
+  await ensureMarkPrices();   // [FIX-DASH v1] Unrealized PnL ของหน้า Revenue/Dashboard ใช้ mark price สดชุดเดียวกับหน้า Positions
   buildRevenue();
   populateDynamicFilters();
   renderDashboard();
@@ -1760,7 +1840,9 @@ function populateDynamicFilters() {
     'MP Topup','MP Withdraw','Commission Transfer','CommissionWithdraw','Correction','CommissionLedgerCorrection',
     'Withdraw Rejected','Withdraw Confirmed','Admin Adjustment',
     // ไฟล์หลัก v4 (v2.77-TXHIST) + type ที่ยังไม่ได้ใส่
-    'Contract PNL','ReferralFlat','ReferralTier','ReferralReserved','ProfitShareTeam'
+    'Contract PNL','ReferralFlat','ReferralTier','ReferralReserved','ProfitShareTeam',
+    // [v4.2] ตรงกับ TRANS_CATEGORY_TYPES ใน GAS Main v6.4
+    'Futures Direct Liquidation','Earn Claim PNL','ProfitShareLevelA','ProfitShareLevelB'
   ];
   const txTypesFromData = [...new Set(D.txlog.map(t => t.type).filter(Boolean))].sort();
   // รวมทั้งจากข้อมูลจริงและ fallback ที่รู้จาก GAS schema
@@ -1807,18 +1889,27 @@ function populateDynamicFilters() {
 }
 
 function buildRevenue() {
+  // [FIX-DASH v1] รวมระดับเทรด: GrossProfit = Σ realized_pnl>0, GrossLoss = Σ |realized_pnl<0| (ปิดแล้ว + Partially Closed ที่ยังไม่อยู่ใน history)
+  //               Unrealized = คำนวณจาก mark price สด (ชีต Positions ไม่มีคอลัมน์ unrealized_pnl)
+  const histIds = new Set(D.posHistory.map(p=>String(p.id)));
+  const partial = D.positions.filter(p=>String(p.status||'').toLowerCase()==='partially closed' && !histIds.has(String(p.id)));
   D.revenue = D.members.map(m=>{
-    const pos  = D.posHistory.filter(p=>String(p.uid)===String(m.BNB_ID));
-    const opos = D.positions.filter(p=>String(p.uid)===String(m.BNB_ID));
-    const ec   = D.earnContracts.filter(c=>String(c.uid)===String(m.BNB_ID));
-    const rPnl = pos.reduce((s,p)=>s+parseFloat(p.realized_pnl||0),0);
-    const uPnl = opos.reduce((s,p)=>s+parseFloat(p.unrealized_pnl||0),0);
-    const earnBal = ec.reduce((s,c)=>s+(c.status==='active'?parseFloat(c.current_balance||0):0),0);
+    const uid  = String(m.BNB_ID);
+    const pos  = D.posHistory.filter(p=>String(p.uid)===uid);
+    const part = partial.filter(p=>String(p.uid)===uid);
+    const opos = D.positions.filter(p=>String(p.uid)===uid);
+    const ec   = D.earnContracts.filter(c=>String(c.uid)===uid);
+    const pnls = [...pos, ...part].map(p=>parseFloat(p.realized_pnl||0)||0);
+    const gProfit = pnls.filter(v=>v>0).reduce((s,v)=>s+v,0);
+    const gLoss   = pnls.filter(v=>v<0).reduce((s,v)=>s+Math.abs(v),0);
+    const uPnl = opos.reduce((s,p)=>{ const u = posUpnl(p); return s + (u!==null ? u : (parseFloat(p.unrealized_pnl||0)||0)); },0);
+    const earnBal = ec.reduce((s,c)=>s+(String(c.status||'').toLowerCase()==='active'?parseFloat(c.current_balance||0):0),0);
     const wins = pos.filter(p=>parseFloat(p.realized_pnl||0)>0).length;
     return {
       BNB_ID:m.BNB_ID, Name:m.Name, Team:m.Team,
       Trades:pos.length, WinCount:wins,
-      RealizedPnl:rPnl, UnrealizedPnl:uPnl,
+      GrossProfit:gProfit, GrossLoss:gLoss,
+      RealizedPnl:gProfit-gLoss, UnrealizedPnl:uPnl,
       WalletBalance:parseFloat(m._bal||0),
       EarnBalance:earnBal,
     };
@@ -1831,15 +1922,16 @@ function buildRevenue() {
 function renderDashboard() {
   const actM = D.members.filter(m=>m.Status==='Trading&payments').length;
   document.getElementById('s-mem').textContent  = fnumInt(D.members.length);
-  document.getElementById('s-memact').textContent = fnumInt(actM)+' Active / '+fnumInt(D.members.length-actM)+' Pending';
+  const penM = D.members.filter(m=>m.Status==='Pending').length, othM = D.members.length-actM-penM;
+  document.getElementById('s-memact').textContent = fnumInt(actM)+' Active / '+fnumInt(penM)+' Pending'+(othM>0?' / '+fnumInt(othM)+' อื่นๆ':'');
   document.getElementById('s-pos').textContent  = fnumInt(D.positions.length);
 
-  const actEc  = D.earnContracts.filter(c=>c.status==='active').length;
-  const frzEc  = D.earnContracts.filter(c=>c.status==='frozen').length;
-  document.getElementById('s-earn').textContent = fnumInt(D.earnContracts.length);
-  document.getElementById('s-earnact').textContent = fnumInt(actEc)+'A / '+fnumInt(frzEc)+'F';
+  const _ecSt = s => D.earnContracts.filter(c=>String(c.status||'').toLowerCase()===s).length;
+  const actEc = _ecSt('active'), frzEc = _ecSt('frozen'), matEc = _ecSt('matured'), clsEc = _ecSt('closed');
+  document.getElementById('s-earn').textContent = fnumInt(D.earnContracts.length-clsEc);
+  document.getElementById('s-earnact').textContent = fnumInt(actEc)+'A / '+fnumInt(frzEc)+'F / '+fnumInt(matEc)+'M · ปิดแล้ว '+fnumInt(clsEc);
 
-  const totFund = D.funding.reduce((s,f)=>s+Math.abs(parseFloat(f.amount||0)),0);
+  const totFund = D.funding.reduce((s,f)=>s+(parseFloat(f.amount||0)||0),0);   // [FIX-DASH v1] signed (ตรงกับ GAS total_funding_fee)
   document.getElementById('s-fund').textContent = fnum(totFund);
 
   const ss = D.systemStats||{};
@@ -1847,23 +1939,25 @@ function renderDashboard() {
   document.getElementById('s-insurance').textContent = fnum(ss.insurance_fund||0);
   document.getElementById('s-feepool').textContent   = fnum(ss.fee_pool||0);
 
-  const rp = D.revenue.filter(r=>r.RealizedPnl>0).reduce((s,r)=>s+r.RealizedPnl,0);
-  const rl = D.revenue.filter(r=>r.RealizedPnl<0).reduce((s,r)=>s+Math.abs(r.RealizedPnl),0);
+  const rp = D.revenue.reduce((s,r)=>s+(r.GrossProfit||0),0);
+  const rl = D.revenue.reduce((s,r)=>s+(r.GrossLoss||0),0);
   document.getElementById('s-profit').textContent = fnum(rp);
   document.getElementById('s-loss').textContent   = fnum(rl);
 
   renderActFeed();
   renderMemChart();
   renderDsDep();
+  _applyDeniedDash();
 }
 
 function updateDashStats() {
-  const pd = D.deposits.filter(d=>(d.status||'').toLowerCase()==='pending').length;
-  const pw = D.withdrawals.filter(d=>(d.status||'').toLowerCase()==='pending').length;
+  const pd = D.deposits.filter(d=>d._src==='manual'&&(d.status||'').toLowerCase()==='pending').length;
+  const pw = D.withdrawals.filter(wdNeedsAdmin).length;
   document.getElementById('s-dep').textContent = fnumInt(pd);
   document.getElementById('s-wd').textContent  = fnumInt(pw);
   document.getElementById('bdgDep').textContent = pd;
   document.getElementById('bdgWd').textContent  = pw;
+  _applyDeniedDash();
 }
 function updateBadges() { updateDashStats(); }
 
@@ -1871,8 +1965,8 @@ function renderActFeed() {
   const items = [
     ...D.deposits.slice(0,3).map(d=>({t:'dep',ttl:`ฝาก +${fnum(d.amount)} ${d.coin||'USDT'}`,meta:`${d.username||d.uid} · ${fdt(d.created_at)}`})),
     ...D.withdrawals.slice(0,2).map(d=>({t:'wd', ttl:`ถอน -${fnum(d.amount)} USDT`,meta:`${d.username||d.uid} · ${fdt(d.created_at)}`})),
-    ...D.positions.slice(0,2).map(p=>({t:'tr', ttl:`Position: ${p.symbol} ${p.side?.toUpperCase()||''}`,meta:`${p.username||p.uid} · PnL: ${p.realized_pnl||p.unrealized_pnl||0}`})),
-    ...D.members.slice(0,2).map(m=>({t:'reg',ttl:`สมาชิก: ${m.Name}`,meta:`Team: ${m.Team||'—'}`})),
+    ...D.positions.slice(0,2).map(p=>({t:'tr', ttl:`Position: ${p.symbol} ${p.side?.toUpperCase()||''}`,meta:`${p.username||p.uid} · PnL: ${fnum(p.realized_pnl||0)}`})),
+    ...D.members.slice(-2).reverse().map(m=>({t:'reg',ttl:`สมาชิก: ${m.Name}`,meta:`Team: ${m.Team||'—'}`})),
   ].slice(0,8);
   document.getElementById('actFeed').innerHTML = items.length ? items.map(i=>`
     <div class="af-item">
@@ -1952,14 +2046,15 @@ function rdep(resetPage=false) {
   const unmatched = D.deposits.filter(d=>d._src==='auto'&&(d.status||'').toLowerCase()==='unmatched').length;
   const rejAll = D.deposits.filter(d=>(d.status||'').toLowerCase()==='rejected').length;
   const okAll  = D.deposits.filter(d=>['approved','credited'].includes((d.status||'').toLowerCase()));
-  const totalAmt = okAll.reduce((s,d)=>s+parseFloat(d.amount||0),0);
+  const totalAmt = sumUsdt(okAll);
 
   document.getElementById('dp-pend').textContent      = fnumInt(pd);
   document.getElementById('dp-unm').textContent       = fnumInt(unmatched);
   document.getElementById('dp-ok').textContent        = fnumInt(td.length);
-  document.getElementById('dp-amt').textContent       = fnum(td.reduce((s,d)=>s+parseFloat(d.amount||0),0));
+  document.getElementById('dp-amt').textContent       = fnum(sumUsdt(td));
+  { const sb=document.getElementById('dp-amt-sub'); if (sb) sb.textContent='USDT'+otherCoinsTxt(td); }
   document.getElementById('dp-total-amt').textContent = fnum(totalAmt);
-  document.getElementById('dp-total-cnt').textContent = fnumInt(okAll.length) + ' รายการ';
+  document.getElementById('dp-total-cnt').textContent = fnumInt(okAll.length) + ' รายการ' + otherCoinsTxt(okAll);
   document.getElementById('dp-rej').textContent       = fnumInt(rejAll);
 
   // ── Filtered summary bar (แสดงเมื่อมีการค้นหา/filter) ──
@@ -1971,8 +2066,7 @@ function rdep(resetPage=false) {
       const fOk   = data.filter(d=>['approved','credited'].includes((d.status||'').toLowerCase())).length;
       const fPend = data.filter(d=>['pending','unmatched'].includes((d.status||'').toLowerCase())).length;
       const fRej  = data.filter(d=>(d.status||'').toLowerCase()==='rejected').length;
-      const fAmt  = data.filter(d=>['approved','credited'].includes((d.status||'').toLowerCase()))
-                        .reduce((s,d)=>s+parseFloat(d.amount||0),0);
+      const fAmt  = sumUsdt(data.filter(d=>['approved','credited'].includes((d.status||'').toLowerCase())));
       document.getElementById('dp-f-total').textContent = fnumInt(data.length);
       document.getElementById('dp-f-ok').textContent    = fnumInt(fOk);
       document.getElementById('dp-f-pend').textContent  = fnumInt(fPend);
@@ -2130,18 +2224,19 @@ function rwd(resetPage=false) {
       || String(d.amount||'').includes(q);
     return matchQ&&(st==='all'||s===st);
   });
-  const pw = D.withdrawals.filter(d=>['pending','awaiting_approval','needs_review'].includes((d.status||'').toLowerCase())).length;
+  const pw = D.withdrawals.filter(wdNeedsAdmin).length;
   const tw2 = D.withdrawals.filter(d=>isToday(d.updated_at||d.created_at)&&(d.status||'').toLowerCase()==='completed');
   const wdRej  = D.withdrawals.filter(d=>['rejected','cancelled','failed'].includes((d.status||'').toLowerCase())).length;
   const wdProc = D.withdrawals.filter(d=>(d.status||'').toLowerCase()==='processing').length;
   const wdOkAll= D.withdrawals.filter(d=>(d.status||'').toLowerCase()==='completed');
-  const wdTotalAmt = wdOkAll.reduce((s,d)=>s+parseFloat(d.amount||0),0);
+  const wdTotalAmt = sumUsdt(wdOkAll);
 
   document.getElementById('wd-pend').textContent      = fnumInt(pw);
   document.getElementById('wd-ok').textContent        = fnumInt(tw2.length);
-  document.getElementById('wd-amt').textContent       = fnum(tw2.reduce((s,d)=>s+parseFloat(d.amount||0),0));
+  document.getElementById('wd-amt').textContent       = fnum(sumUsdt(tw2));
+  { const sb=document.getElementById('wd-amt-sub'); if (sb) sb.textContent='USDT'+otherCoinsTxt(tw2); }
   document.getElementById('wd-total-amt').textContent = fnum(wdTotalAmt);
-  document.getElementById('wd-total-cnt').textContent = fnumInt(wdOkAll.length) + ' รายการ';
+  document.getElementById('wd-total-cnt').textContent = fnumInt(wdOkAll.length) + ' รายการ' + otherCoinsTxt(wdOkAll);
   document.getElementById('wd-rej').textContent       = fnumInt(wdRej);
   document.getElementById('wd-proc').textContent      = fnumInt(wdProc);
 
@@ -2154,8 +2249,7 @@ function rwd(resetPage=false) {
       const wfOk   = data.filter(d=>(d.status||'').toLowerCase()==='completed').length;
       const wfPend = data.filter(d=>['pending','processing','awaiting_approval','needs_review'].includes((d.status||'').toLowerCase())).length;
       const wfRej  = data.filter(d=>['rejected','cancelled','failed'].includes((d.status||'').toLowerCase())).length;
-      const wfAmt  = data.filter(d=>(d.status||'').toLowerCase()==='completed')
-                         .reduce((s,d)=>s+parseFloat(d.amount||0),0);
+      const wfAmt  = sumUsdt(data.filter(d=>(d.status||'').toLowerCase()==='completed'));
       document.getElementById('wd-f-total').textContent = fnumInt(data.length);
       document.getElementById('wd-f-ok').textContent    = fnumInt(wfOk);
       document.getElementById('wd-f-pend').textContent  = fnumInt(wfPend);
@@ -2329,6 +2423,8 @@ function rtx(resetPage=false) {
       ||(t.asset||'').toLowerCase().includes(q)
       ||(t.note||'').toLowerCase().includes(q)
       ||(t.id||'').toLowerCase().includes(q)
+      ||String(t.contract_id||'').toLowerCase().includes(q)
+      ||String(t.account_type||'').toLowerCase().includes(q)
       ||(t.symbol||'').toLowerCase().includes(q);
     // 'Earn Claim' ครอบคลุมทั้ง 3 รูปแบบที่ GAS เขียนจริง: 'Earn Claim', 'Earn Claim (APT)', 'Earn Claim (Trade)'
     // ถ้าเทียบแบบ exact match เฉยๆ จะเห็นแค่รายการที่ type ตรงเป๊ะ 'Earn Claim' เท่านั้น ธุรกรรม claim จริงส่วนใหญ่หายไป
@@ -2350,11 +2446,13 @@ function rtx(resetPage=false) {
       <td style="font-size:11px">${t.asset||'USDT'}</td>
       <td class="mono" style="color:${col};font-weight:600">${amt}</td>
       <td style="font-size:11px">${t.symbol||'—'}</td>
+      <td style="font-size:11px">${t.account_type||'—'}</td>
+      <td class="mono" style="font-size:10px">${t.contract_id||'—'}</td>
       <td style="font-size:11px;color:var(--t2);max-width:160px;overflow:hidden;text-overflow:ellipsis">${t.note||'—'}</td>
       <td style="font-size:11px;color:var(--t2)">${fdt(t.created_at)}</td>
     </tr>`;
   }).join('')
-  : '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  : '<tr><td colspan="10" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
   paginate('txPg',total,txPg,p=>{txPg=p;rtx()});
 }
 
@@ -2372,6 +2470,8 @@ function vTx(id) {
     <div class="dr"><div class="dk">Asset</div><div class="dv">${d.asset||'USDT'}</div></div>
     <div class="dr"><div class="dk">จำนวน</div><div class="dv" style="color:${col};font-weight:700">${amt}</div></div>
     <div class="dr"><div class="dk">Symbol/Network</div><div class="dv">${d.symbol||'—'}</div></div>
+    <div class="dr"><div class="dk">Account</div><div class="dv">${d.account_type||'—'}</div></div>
+    <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${d.contract_id||'—'}</div></div>
     <div class="dr"><div class="dk">หมายเหตุ</div><div class="dv">${d.note||'—'}</div></div>
     <div class="dr"><div class="dk">เวลา</div><div class="dv">${fdt(d.created_at)}</div></div>
   `,[
@@ -2496,8 +2596,8 @@ async function vMem(bid) {
   const det = detRes?.data && !detRes.data.error ? detRes.data : null;
 
   const rev=D.revenue.find(r=>String(r.BNB_ID)===String(bid))||{};
-  const depCount = det ? det.deposits.filter(d=>d.status==='approved').length
-                       : D.deposits.filter(d=>String(d.uid)===String(bid)&&d.status==='approved').length;
+  const depCount = det ? det.deposits.filter(d=>['approved','credited'].includes(String(d.status||'').toLowerCase())).length
+                       : D.deposits.filter(d=>String(d.uid)===String(bid)&&['approved','credited'].includes(String(d.status||'').toLowerCase())).length;
   const wdCount   = det ? det.withdrawals.filter(d=>d.status==='completed').length
                        : D.withdrawals.filter(d=>String(d.uid)===String(bid)&&d.status==='completed').length;
   const ecCount   = det ? det.earn_contracts.length
@@ -2548,7 +2648,7 @@ async function vMem(bid) {
   `,[
     {l:'📨 ส่งข้อความ',c:'ok',fn:`openSendMessage('${bid}','${(m.Name||'').replace(/'/g,"\\'")}')`},
     {l:'💬 แชท',c:'ok',fn:`schAdminOpenChat('${bid}','${(m.Name||'').replace(/'/g,"\\'")}')`},
-    {l:'💸 Distribute Profit',c:'pri',fn:`openDistributeProfit('${bid}')`},
+    ...(window.ALLOW_LEGACY_DISTRIBUTE ? [{l:'💸 Distribute Profit',c:'pri',fn:`openDistributeProfit('${bid}')`}] : []), // [v5.3] ซ่อนปุ่มเมื่อปิดใช้งาน (GAS ALLOW_LEGACY_DISTRIBUTE=false)
     {l:'✏️ แก้ไขข้อมูล',c:'ok',fn:`cm();eMem('${bid}')`},
     {l:'ปิด',c:'can',fn:'cm()'}
   ]);
@@ -2715,11 +2815,14 @@ function openAddMember() {
 //  POSITIONS
 // ══════════════════════════════════════════
 let posPg=1;
+// [v4.2 ORDHIST] OpenOrders ใน GAS (v6.1+) เก็บแถว Filled/Cancelled ไว้เป็นประวัติด้วย — "Open Orders" ต้องนับ/แสดงเฉพาะ Pending
+const _ordPending = o => { const st=String((o&&o.status)||'').trim().toLowerCase(); return !st||st==='pending'||st==='new'||st==='open'; };
 function updatePosHead() {
   const ty=document.getElementById('poTy')?.value||'positions';
   const heads={
     positions:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Lev</th><th>Size</th><th>Entry Price</th><th>Unrealized PnL</th><th>Realized PnL</th><th>Status</th><th>Contract</th></tr>`,
     orders:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Type</th><th>Size</th><th>Limit Price</th><th>TP</th><th>SL</th><th>Contract</th></tr>`,
+    orderhist:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Type</th><th>Size</th><th>Price</th><th>Status</th><th>Contract</th><th>เวลา</th></tr>`,
     history:`<tr><th>BNB ID</th><th>ชื่อ</th><th>Symbol</th><th>Side</th><th>Lev</th><th>Size</th><th>Entry</th><th>Exit</th><th>Realized PnL</th><th>ROI %</th><th>Duration</th></tr>`,
   };
   document.getElementById('poHead').innerHTML = heads[ty]||heads.positions;
@@ -2748,14 +2851,14 @@ function rpos(resetPage=false) {
       ||String(p.order_id||'').toLowerCase().includes(q);
   };
 
-  const srcMap = { positions: D.positions, orders: D.orders, history: D.posHistory };
+  const srcMap = { positions: D.positions, orders: D.orders.filter(_ordPending), orderhist: D.orders.filter(o=>!_ordPending(o)), history: D.posHistory };
   const src = srcMap[ty] || D.positions;
   const data = src.filter(matchesQ);
 
   // ── การ์ดสรุปด้านบน — อิงตาม search query (q) เท่านั้น ไม่ผูกกับ tab (ty) ที่เลือกอยู่
   //    เพื่อไม่ให้ label "Open Positions"/"Open Orders" สลับความหมายกันตอนเปลี่ยน tab ────────
   const posMatch = D.positions.filter(matchesQ);
-  const ordMatch = D.orders.filter(matchesQ);
+  const ordMatch = D.orders.filter(o=>_ordPending(o)&&matchesQ(o));
   document.getElementById('po-cnt').textContent = fnumInt(posMatch.length);
   document.getElementById('po-ord').textContent = fnumInt(ordMatch.length);
   const totalMargin_entry = posMatch.reduce((s,p)=>{
@@ -2779,12 +2882,9 @@ function rpos(resetPage=false) {
     try {
       let markPrices = {};
       if (symbols.length) {
-        // Binance Futures mark price endpoint (public, no key needed)
-        const res = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex');
-        if (res.ok) {
-          const list = await res.json();
-          list.forEach(item => { markPrices[item.symbol] = parseFloat(item.markPrice); });
-        }
+        // [FIX-DASH v1] ใช้ cache mark price ร่วมกันทุกหน้า (ไม่ยิง Binance ซ้ำทุกครั้งที่พิมพ์ค้นหา/เปลี่ยนหน้า)
+        markPrices = Object.assign({}, await ensureMarkPrices());
+        if (!Object.keys(markPrices).length) throw new Error('no mark prices');
       }
 
       let totalUPnL   = 0;
@@ -2802,8 +2902,8 @@ function rpos(resetPage=false) {
           ? (markPrice - entry) * size
           : (entry - markPrice) * size;
 
-        // Initial Margin = notional (mark price) / leverage
-        const margin = (markPrice * size) / lev;
+        // [FIX-DASH v1] Initial Margin = notional ที่ราคา entry / leverage (ตรงกับ margin ที่ถูกล็อกจริงตอนเปิด ไม่เปลี่ยนตาม mark price)
+        const margin = (entry * size) / lev;
 
         totalUPnL   += uPnl;
         totalMargin += margin;
@@ -2864,11 +2964,27 @@ function rpos(resetPage=false) {
         <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
         <td class="mono center">${p.lev||'—'}x</td>
         <td class="mono">${fnum(p.size,4)}</td>
-        <td class="mono">${fnum(p.entry_price)}</td>
+        <td class="mono">${fpx(p.entry_price)}</td>
         <td class="mono" data-upnl style="color:var(--t3)">...</td>
         <td class="mono" style="color:${pnl>=0?'var(--g)':'var(--r)'}">${(pnl>=0?'+':'')+fnum(pnl)}</td>
         <td><span class="pill p-act">${p.status||'Active'}</span></td>
         <td class="mono" style="font-size:10px">${p.earn_contract_id||'—'}</td>
+      </tr>`;
+    }).join('');
+  } else if (ty === 'orderhist') {
+    bodyHtml = rows.map(p=>{
+      const username = p.member_name || memByUid[String(p.uid)] || '';
+      return `<tr style="cursor:pointer" onclick="vOrder('${p.order_id}')">
+        <td class="mono" style="color:var(--gold)">${p.uid||'—'}</td>
+        <td style="font-size:12px">${username||'—'}</td>
+        <td class="mono">${p.symbol||'—'}</td>
+        <td><span class="pill ${p.side==='long'||p.side==='Buy'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
+        <td>${p.order_type||'Limit'}</td>
+        <td class="mono">${fnum(p.size,4)}</td>
+        <td class="mono">${fpx(p.limit_price)}</td>
+        <td><span class="pill ${String(p.status||'').toLowerCase()==='filled'?'p-ok':'p-pend'}">${p.status||'—'}</span></td>
+        <td class="mono" style="font-size:10px">${p.contract_id||'—'}</td>
+        <td style="font-size:11px;color:var(--t2)">${fdt(p.updated_at||p.created_at)}</td>
       </tr>`;
     }).join('');
   } else if (ty === 'orders') {
@@ -2881,7 +2997,7 @@ function rpos(resetPage=false) {
         <td><span class="pill ${p.side==='long'||p.side==='Buy'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
         <td>${p.order_type||'Limit'}</td>
         <td class="mono">${fnum(p.size,4)}</td>
-        <td class="mono">${fnum(p.limit_price)}</td>
+        <td class="mono">${fpx(p.limit_price)}</td>
         <td class="mono" style="color:var(--g)">${p.tp_price||'—'}</td>
         <td class="mono" style="color:var(--r)">${p.sl_price||'—'}</td>
         <td class="mono" style="font-size:10px">${p.contract_id||'—'}</td>
@@ -2899,8 +3015,8 @@ function rpos(resetPage=false) {
         <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
         <td class="mono center">${p.lev||'—'}x</td>
         <td class="mono">${fnum(p.size,4)}</td>
-        <td class="mono">${fnum(p.entry_price)}</td>
-        <td class="mono">${fnum(p.exit_price||p.avg_close)}</td>
+        <td class="mono">${fpx(p.entry_price)}</td>
+        <td class="mono">${fpx(p.exit_price||p.avg_close)}</td>
         <td class="mono" style="color:${rp>=0?'var(--g)':'var(--r)'}">${(rp>=0?'+':'')+fnum(rp)}</td>
         <td class="mono" style="color:${parseFloat(p.roi||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(p.roi||0).toFixed(2)}%</td>
         <td>${dur}</td>
@@ -2931,7 +3047,7 @@ function vPos(id) {
     <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
     <div class="dr"><div class="dk">Leverage</div><div class="dv mono">${p.lev||'—'}x</div></div>
     <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
-    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fnum(p.entry_price)}</div></div>
+    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fpx(p.entry_price)}</div></div>
     <div class="dr"><div class="dk">TP / SL</div><div class="dv mono">${p.tp||'—'} / ${p.sl||'—'}</div></div>
     <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${p.earn_contract_id||'—'}</div></div>
     <div class="dr"><div class="dk">เปิดเมื่อ</div><div class="dv">${fdt(p.opened_at)}</div></div>
@@ -3082,7 +3198,7 @@ function vOrder(id) {
     <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'||p.side==='Buy'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
     <div class="dr"><div class="dk">Order Type</div><div class="dv">${p.order_type||'Limit'}</div></div>
     <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
-    <div class="dr"><div class="dk">Limit Price</div><div class="dv mono">${fnum(p.limit_price)}</div></div>
+    <div class="dr"><div class="dk">Limit Price</div><div class="dv mono">${fpx(p.limit_price)}</div></div>
     <div class="dr"><div class="dk">Take Profit</div><div class="dv mono" style="color:var(--g)">${p.tp_price||'—'}</div></div>
     <div class="dr"><div class="dk">Stop Loss</div><div class="dv mono" style="color:var(--r)">${p.sl_price||'—'}</div></div>
     <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${p.contract_id||'—'}</div></div>
@@ -3147,7 +3263,7 @@ function confirmDeleteOrder(orderId) {
     <div style="color:var(--r);font-weight:700;margin-bottom:10px">การลบนี้ถาวร ไม่สามารถย้อนกลับได้</div>
     <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${p.uid||'—'}</div></div>
     <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${p.symbol||'—'}</div></div>
-    <div class="dr"><div class="dk">Limit Price</div><div class="dv">${fnum(p.limit_price)}</div></div>
+    <div class="dr"><div class="dk">Limit Price</div><div class="dv">${fpx(p.limit_price)}</div></div>
   `,[
     {l:'ยืนยันลบ',c:'no',fn:`doDeleteOrder('${orderId}')`},
     {l:'ยกเลิก',c:'can',fn:`vOrder('${orderId}')`}
@@ -3177,8 +3293,8 @@ function vPosHist(id) {
     <div class="dr"><div class="dk">Side</div><div class="dv"><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></div></div>
     <div class="dr"><div class="dk">Leverage</div><div class="dv mono">${p.lev||'—'}x</div></div>
     <div class="dr"><div class="dk">Size</div><div class="dv mono">${p.size||'0'}</div></div>
-    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fnum(p.entry_price)}</div></div>
-    <div class="dr"><div class="dk">Exit Price</div><div class="dv mono">${fnum(p.exit_price||p.avg_close)}</div></div>
+    <div class="dr"><div class="dk">Entry Price</div><div class="dv mono">${fpx(p.entry_price)}</div></div>
+    <div class="dr"><div class="dk">Exit Price</div><div class="dv mono">${fpx(p.exit_price||p.avg_close)}</div></div>
     <div class="dr"><div class="dk">Realized PnL</div><div class="dv mono" style="color:${rp>=0?'var(--g)':'var(--r)'};font-weight:700">${(rp>=0?'+':'')+fnum(rp)}</div></div>
     <div class="dr"><div class="dk">ROI</div><div class="dv mono" style="color:${parseFloat(p.roi||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(p.roi||0).toFixed(2)}%</div></div>
     <div class="dr"><div class="dk">Duration</div><div class="dv">${dur}</div></div>
@@ -3217,10 +3333,13 @@ function rec(resetPage=false) {
     return matchQ&&matchSt;
   });
 
-  document.getElementById('ec-act').textContent    = fnumInt(data.filter(c=>c.status==='active').length);
-  document.getElementById('ec-frz').textContent    = fnumInt(data.filter(c=>c.status==='frozen').length);
-  const totalStaked = data.reduce((s,c)=>s+parseFloat(c.staked_amount||0),0);
-  const totalBal    = data.reduce((s,c)=>s+parseFloat(c.current_balance||0),0);
+  // [FIX-DASH v1] การ์ดสรุป = ทั้งระบบ (ไม่เปลี่ยนตามตัวกรอง) · Staked/Balance รวมเฉพาะสัญญาที่ยังไม่ปิด
+  const _ecAll  = D.earnContracts;
+  const _ecLive = _ecAll.filter(c=>String(c.status||'').toLowerCase()!=='closed');
+  document.getElementById('ec-act').textContent    = fnumInt(_ecAll.filter(c=>String(c.status||'').toLowerCase()==='active').length);
+  document.getElementById('ec-frz').textContent    = fnumInt(_ecAll.filter(c=>String(c.status||'').toLowerCase()==='frozen').length);
+  const totalStaked = _ecLive.reduce((s,c)=>s+(parseFloat(c.staked_amount||0)||0),0);
+  const totalBal    = _ecLive.reduce((s,c)=>s+(parseFloat(c.current_balance||0)||0),0);
   document.getElementById('ec-stk').textContent    = fnum(totalStaked);
   document.getElementById('ec-bal').textContent    = fnum(totalBal);
 
@@ -3229,7 +3348,7 @@ function rec(resetPage=false) {
     const username = memByUid[String(c.uid)] || '';
     const stk=parseFloat(c.staked_amount||0), bal=parseFloat(c.current_balance||0);
     const rp=parseFloat(c.realized_pnl||0);
-    const dd = stk>0 ? ((stk-bal)/stk*100).toFixed(2) : '0.00';
+    const dd = stk>0 ? Math.max(0,(stk-bal)/stk*100).toFixed(2) : '0.00';
     const planLabel = c.plan_days ? `${c.plan_days}วัน` : '—';
     return `<tr style="cursor:pointer" onclick="vEarnContract('${c.contract_id}')">
       <td class="mono" style="color:var(--gold)">${c.uid||'—'}</td>
@@ -3261,7 +3380,7 @@ function vEarnContract(contractId) {
   const c=D.earnContracts.find(x=>String(x.contract_id)===String(contractId)); if(!c) return;
   const memByUid = {}; D.members.forEach(m=>{ memByUid[String(m.BNB_ID)] = m.Name; });
   const stk=parseFloat(c.staked_amount||0), bal=parseFloat(c.current_balance||0);
-  const dd=stk>0?((stk-bal)/stk*100).toFixed(2):'0.00';
+  const dd=stk>0?Math.max(0,(stk-bal)/stk*100).toFixed(2):'0.00';
   const startMs = c.start_time_ms ? parseInt(c.start_time_ms) : null;
   const endMs   = c.end_time_ms ? parseInt(c.end_time_ms)
                 : (startMs ? startMs + (parseInt(c.plan_days||0)||0)*86400000 : null);
@@ -3300,6 +3419,9 @@ function vEarnContract(contractId) {
     <div class="dr"><div class="dk">Drawdown</div><div class="dv" style="color:${parseFloat(dd)>=30?'var(--r)':parseFloat(dd)>=15?'var(--y)':'var(--g)'}">${dd}%</div></div>
     <div class="dr"><div class="dk">Status</div><div class="dv"><span class="pill ${c.status==='active'?'p-act':'p-frz'}">${c.status}</span></div></div>
     <div class="dr"><div class="dk">Mode</div><div class="dv">${(()=>{ const m=String(c.contract_mode||'trade').trim().toLowerCase()==='fixed'?'fixed':'trade'; return m==='fixed'?'<span class="pill" style="background:rgba(232,184,58,.18);color:var(--gold);border:1px solid var(--gold)">Fixed</span>':'<span class="pill p-act">Trade</span>'; })()}</div></div>
+    <div class="dr"><div class="dk">Tier</div><div class="dv">${String(c.contract_tier||'standard').toLowerCase()==='vip'?'<span class="pill" style="background:rgba(232,184,58,.18);color:var(--gold);border:1px solid var(--gold)">VIP</span>':'Standard'}</div></div>
+    <div class="dr"><div class="dk">Locked Profit (ล็อกถอน)</div><div class="dv mono">${fnum(parseFloat(c.locked_profit||0))} USDT</div></div>
+    <div class="dr"><div class="dk">APT Claimed สะสม</div><div class="dv mono">${fnum(parseFloat(c.apt_total_claimed||0))} USDT</div></div>
     <div class="dr"><div class="dk">เริ่มต้น</div><div class="dv">${startMs?new Date(startMs).toLocaleString('th-TH'):'—'}</div></div>
     <div class="dr"><div class="dk">ครบกำหนด</div><div class="dv">${endMs?new Date(endMs).toLocaleString('th-TH'):'—'}</div></div>
     <div class="dr"><div class="dk">เหลือเวลา</div><div class="dv mono" id="ec-countdown" style="font-weight:700;color:var(--goldb)">—</div></div>
@@ -3744,7 +3866,7 @@ async function loadProfileMarkPrices() {
 }
 
 function renderFullProfile(det, highlightContractId) {
-  const ddPct = c => { const s=parseFloat(c.staked_amount||0), b=parseFloat(c.current_balance||0); return s>0?((s-b)/s*100).toFixed(2):'0.00'; };
+  const ddPct = c => { const s=parseFloat(c.staked_amount||0), b=parseFloat(c.current_balance||0); return s>0?Math.max(0,(s-b)/s*100).toFixed(2):'0.00'; };
 
   // ─── helper: คำนวณ APT จริงแบบเรียลไทม์ จาก daily_yield_pct × จำนวนวันที่ผ่านมาจริง ───
   // (ไม่พึ่ง total_claimed ในชีต เพราะ field นั้นอาจไม่ตรงกับยอดจริงที่ควรได้รับ)
@@ -4019,8 +4141,8 @@ function renderFullProfile(det, highlightContractId) {
         <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
         <td class="mono center">${p.lev||'—'}x</td>
         <td class="mono right">${fnum(p.size,4)}</td>
-        <td class="mono right">${fnum(p.entry_price)}</td>
-        <td class="mono right">${p.exit_price||p.avg_close?fnum(p.exit_price||p.avg_close):'—'}</td>
+        <td class="mono right">${fpx(p.entry_price)}</td>
+        <td class="mono right">${p.exit_price||p.avg_close?fpx(p.exit_price||p.avg_close):'—'}</td>
         <td class="mono right" style="color:${prp>=0?'var(--g)':'var(--r)'}">${(prp>=0?'+':'')+fnum(prp)}</td>
         <td class="mono right" style="color:${parseFloat(p.roi||0)>=0?'var(--g)':'var(--r)'}">${parseFloat(p.roi||0).toFixed(2)}%</td>
         <td>${dur}</td>
@@ -4034,7 +4156,7 @@ function renderFullProfile(det, highlightContractId) {
         <td><span class="pill ${p.side==='long'?'p-ok':'p-no'}">${(p.side||'').toUpperCase()}</span></td>
         <td class="mono center">${p.lev||'—'}x</td>
         <td class="mono right">${fnum(p.size,4)}</td>
-        <td class="mono right">${fnum(p.entry_price)}</td>
+        <td class="mono right">${fpx(p.entry_price)}</td>
         <td class="mono right" data-mp-mark style="color:var(--t3)">...</td>
         <td class="mono right" data-mp-upnl style="color:var(--t3)">...</td>
         <td><span class="pill p-act">${p.status||'Active'}</span></td>
@@ -4049,7 +4171,7 @@ function renderFullProfile(det, highlightContractId) {
         <td><span class="pill ${o.side==='long'||o.side==='Buy'?'p-ok':'p-no'}">${(o.side||'').toUpperCase()}</span></td>
         <td class="mono center">${o.lev||'—'}x</td>
         <td class="mono right">${fnum(o.size,4)}</td>
-        <td class="mono right">${fnum(o.limit_price)}</td>
+        <td class="mono right">${fpx(o.limit_price)}</td>
         <td class="mono right" data-mp-upnl style="color:var(--t3)">...</td>
       </tr>`;
     }).join('') : '';
@@ -4464,16 +4586,16 @@ function rrv() {
   });
   data.sort((a,b)=>({pnl_d:b.RealizedPnl-a.RealizedPnl,pnl_a:a.RealizedPnl-b.RealizedPnl,tr_d:b.Trades-a.Trades,bal_d:b.WalletBalance-a.WalletBalance})[so]||0);
 
-  const tp=data.filter(r=>r.RealizedPnl>0).reduce((s,r)=>s+r.RealizedPnl,0);
-  const tl=data.filter(r=>r.RealizedPnl<0).reduce((s,r)=>s+Math.abs(r.RealizedPnl),0);
+  const tp=data.reduce((s,r)=>s+(r.GrossProfit||0),0);
+  const tl=data.reduce((s,r)=>s+(r.GrossLoss||0),0);
   const net=tp-tl;
   document.getElementById('rv-p').textContent = '+'+fnum(tp);
   document.getElementById('rv-l').textContent = '-'+fnum(tl);
   const ne=document.getElementById('rv-n');
   ne.textContent=(net>=0?'+':'')+fnum(net);
   ne.style.color=net>=0?'var(--g)':'var(--r)';
-  document.getElementById('s-profit').textContent=fnum(tp);
-  document.getElementById('s-loss').textContent=fnum(tl);
+  // [FIX-DASH v1] ไม่เขียนทับการ์ด Dashboard (s-profit/s-loss) ด้วยค่าที่ผ่านตัวกรองหน้านี้อีก — Dashboard คำนวณเองใน renderDashboard()
+
 
   const total=data.length, start=(rvPg-1)*PG, rows=data.slice(start,start+PG);
   document.getElementById('rvTb').innerHTML = rows.length ? rows.map(r=>{
@@ -4506,7 +4628,7 @@ function vRevMem(bid) {
   if(!r) { vMem(bid); return; }
   const pos=D.posHistory.filter(p=>String(p.uid)===String(bid));
   const wins=pos.filter(p=>parseFloat(p.realized_pnl||0)>0).length;
-  const losses=pos.length-wins;
+  const losses=pos.filter(p=>parseFloat(p.realized_pnl||0)<0).length;
   const wr=pos.length>0?(wins/pos.length*100).toFixed(1):0;
   const bestTrade=pos.reduce((best,p)=>parseFloat(p.realized_pnl||0)>parseFloat(best.realized_pnl||0)?p:best,{realized_pnl:0});
   const worstTrade=pos.reduce((worst,p)=>parseFloat(p.realized_pnl||0)<parseFloat(worst.realized_pnl||0)?p:worst,{realized_pnl:0});
@@ -4528,7 +4650,7 @@ function vRevMem(bid) {
     ${worstTrade.symbol?`<div class="dr"><div class="dk">Worst Trade</div><div class="dv mono" style="color:var(--r)">${worstTrade.symbol} ${fnum(worstTrade.realized_pnl)}</div></div>`:''}
   `,[
     {l:'ดูโปรไฟล์สมาชิก',c:'pri',fn:`vMem('${bid}')`},
-    {l:'💸 Distribute Profit',c:'ok',fn:`openDistributeProfit('${bid}')`},
+    ...(window.ALLOW_LEGACY_DISTRIBUTE ? [{l:'💸 Distribute Profit',c:'ok',fn:`openDistributeProfit('${bid}')`}] : []), // [v5.3] ซ่อนปุ่มเมื่อปิดใช้งาน
     {l:'ปิด',c:'can',fn:'cm()'}
   ]);
 }
@@ -4550,13 +4672,20 @@ function rff(resetPage=false) {
       ||(f.symbol||'').toLowerCase().includes(q)
       ||(f.asset||'').toLowerCase().includes(q)
       ||(f.id||'').toLowerCase().includes(q)
+      ||String(f.contract_id||'').toLowerCase().includes(q)
       ||String(Math.abs(parseFloat(f.amount||0)).toFixed(6)).includes(q);
     return matchQ&&checkDate(f.created_at,dt);
   });
-  const tot=data.reduce((s,f)=>s+Math.abs(parseFloat(f.amount||0)),0);
-  document.getElementById('ff-tot').textContent = fnum(tot,4);
+  // [FIX-DASH v1] รวมตามเครื่องหมายที่เก็บในชีต (ไม่ใช้ abs) + แยกยอดบวก/ลบ
+  const _fa = f => parseFloat(f.amount||0)||0;
+  const tot = data.reduce((s,f)=>s+_fa(f),0);
+  const ffPos = data.reduce((s,f)=>s+(_fa(f)>0?_fa(f):0),0), ffNeg = data.reduce((s,f)=>s+(_fa(f)<0?-_fa(f):0),0);
+  const _tEl = document.getElementById('ff-tot');
+  _tEl.textContent = (tot>=0?'+':'-')+fnum(Math.abs(tot),4);
+  _tEl.style.color = tot<0?'var(--r)':tot>0?'var(--g)':'';
+  const _sEl = document.getElementById('ff-sub'); if (_sEl) _sEl.textContent = 'USDT · บวก +'+fnum(ffPos,4)+' / ลบ −'+fnum(ffNeg,4);
   document.getElementById('ff-cnt').textContent = fnumInt(data.length);
-  document.getElementById('ff-avg').textContent = data.length?fnum(tot/data.length,4):'—';
+  document.getElementById('ff-avg').textContent = data.length?((tot>=0?'+':'-')+fnum(Math.abs(tot/data.length),4)):'—';
 
   const total=data.length, start=(ffPg-1)*PG, rows=data.slice(start,start+PG);
   document.getElementById('ffTb').innerHTML = rows.length ? rows.map(f=>{
@@ -4566,12 +4695,89 @@ function rff(resetPage=false) {
       <td class="mono" style="color:var(--gold)">${f.uid||'—'}</td>
       <td style="font-size:12px">${username||'—'}</td>
       <td class="mono">${f.symbol||'—'}</td>
-      <td class="mono" style="color:var(--r)">-${fnum(Math.abs(parseFloat(f.amount||0)),6)}</td>
+      <td class="mono" style="font-size:10px">${f.contract_id||'—'}</td>
+      <td class="mono" style="color:${_fa(f)<0?'var(--r)':_fa(f)>0?'var(--g)':'var(--t1)'}">${_fa(f)>=0?'+':'-'}${fnum(Math.abs(_fa(f)),6)}</td>
       <td style="font-size:11px;color:var(--t2)">${fdt(f.created_at)}</td>
     </tr>`;
   }).join('')
-  : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
+  : '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล</td></tr>';
   paginate('ffPg',total,ffPg,p=>{ffPg=p;rff()});
+}
+
+// ══════════════════════════════════════════
+//  [v4.2] COMMISSION LEDGER / REQUEST LOG / MAIN TOOLS
+// ══════════════════════════════════════════
+let clPg=1, rlPg=1;
+function rledger(resetPage=false) {
+  if(resetPage) clPg=1;
+  const q=(document.getElementById('clQ')?.value||'').toLowerCase();
+  const ty=document.getElementById('clTy')?.value||'all';
+  const dt=document.getElementById('clDt')?.value||'all';
+  const memByUid={}; D.members.forEach(m=>{ memByUid[String(m.BNB_ID)]=m.Name; });
+  const sel=document.getElementById('clTy');
+  if(sel){ const types=[...new Set(D.ledger.map(r=>r.type).filter(Boolean))].sort();
+    if(sel.options.length-1!==types.length){ const prev=sel.value; while(sel.options.length>1) sel.remove(1);
+      types.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; sel.appendChild(o); });
+      if(types.indexOf(prev)>-1) sel.value=prev; } }
+  const data=D.ledger.filter(r=>{
+    const nm=(memByUid[String(r.uid)]||'').toLowerCase();
+    return (!q||String(r.uid).toLowerCase().includes(q)||nm.includes(q)||String(r.contract_id||'').toLowerCase().includes(q)
+      ||String(r.source_uid||'').toLowerCase().includes(q)||String(r.note||'').toLowerCase().includes(q)||String(r.type||'').toLowerCase().includes(q))
+      &&(ty==='all'||r.type===ty)&&checkDate(r.created_at,dt);
+  });
+  let inn=0,out=0; data.forEach(r=>{ const a=parseFloat(r.amount)||0; if(a>=0) inn+=a; else out+=-a; });
+  document.getElementById('cl-in').textContent=fnum(inn,4);
+  document.getElementById('cl-out').textContent=fnum(out,4);
+  document.getElementById('cl-cnt').textContent=fnumInt(data.length);
+  { // [FIX-DASH v1] โหลดมาแค่ 2,000 แถวล่าสุด — แจ้งให้รู้ว่ายอดรวมอาจไม่ครบ
+    const trunc = D.ledger.length >= 2000, w = trunc ? ' · ⚠️ ล่าสุด 2,000 แถว' : '';
+    [['cl-in-sub','USDT'],['cl-out-sub','USDT'],['cl-cnt-sub','ตามตัวกรอง']].forEach(([id,b])=>{ const el=document.getElementById(id); if (el) el.textContent=b+w; }); }
+  const start=(clPg-1)*PG, rows=data.slice(start,start+PG);
+  document.getElementById('clTb').innerHTML=rows.length?rows.map(r=>{
+    const a=parseFloat(r.amount)||0;
+    return `<tr><td style="font-size:11px;color:var(--t2)">${fdt(r.created_at)}</td>
+      <td class="mono" style="color:var(--gold)">${_esc(r.uid)||'—'}</td>
+      <td style="font-size:12px">${_esc(memByUid[String(r.uid)])||'—'}</td>
+      <td style="font-size:12px">${_esc(r.type)||'—'}</td>
+      <td class="mono" style="color:${a>=0?'var(--g)':'var(--r)'};font-weight:600">${(a>=0?'+':'')+fnum(a,4)}</td>
+      <td class="mono" style="font-size:10px">${_esc(r.contract_id)||'—'}</td>
+      <td class="mono" style="font-size:11px">${_esc(r.source_uid)||'—'}</td>
+      <td style="font-size:11px;color:var(--t2);max-width:220px;overflow:hidden;text-overflow:ellipsis">${_esc(r.note)||'—'}</td></tr>`;
+  }).join(''):'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล (ต้องมีสิทธิ์ Finance/Owner)</td></tr>';
+  paginate('clPg',data.length,clPg,p=>{clPg=p;rledger()});
+}
+function rreqlog(resetPage=false) {
+  if(resetPage) rlPg=1;
+  const q=(document.getElementById('rlQ')?.value||'').toLowerCase();
+  const st=document.getElementById('rlSt')?.value||'all';
+  const cnt=k=>D.reqLog.filter(r=>String(r.status||'').toLowerCase()===k).length;
+  document.getElementById('rl-all').textContent=fnumInt(D.reqLog.length);
+  document.getElementById('rl-pend').textContent=fnumInt(cnt('pending'));
+  document.getElementById('rl-fail').textContent=fnumInt(cnt('failed'));
+  document.getElementById('rl-unc').textContent=fnumInt(cnt('uncertain'));
+  const data=D.reqLog.filter(r=>(!q||String(r.uid||'').toLowerCase().includes(q)||String(r.action||'').toLowerCase().includes(q)
+      ||String(r.req_key||'').toLowerCase().includes(q)||String(r.error||'').toLowerCase().includes(q))
+    &&(st==='all'||String(r.status||'').toLowerCase()===st));
+  const start=(rlPg-1)*PG, rows=data.slice(start,start+PG);
+  const cls=s=>({done:'p-ok',failed:'p-no',uncertain:'p-frz',pending:'p-pend'}[String(s||'').toLowerCase()]||'p-pend');
+  document.getElementById('rlTb').innerHTML=rows.length?rows.map(r=>`<tr>
+      <td style="font-size:11px;color:var(--t2)">${fdt(r.created_at||r.updated_at)}</td>
+      <td class="mono" style="color:var(--gold)">${_esc(r.uid)||'—'}</td>
+      <td class="mono" style="font-size:11px">${_esc(r.action)||'—'}</td>
+      <td><span class="pill ${cls(r.status)}">${_esc(r.status)||'—'}</span></td>
+      <td class="mono" style="font-size:10px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${_esc(r.req_key)||'—'}</td>
+      <td style="font-size:11px;color:var(--r);max-width:260px;overflow:hidden;text-overflow:ellipsis">${_esc(r.error)||''}</td></tr>`).join('')
+    :'<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--t3)">ไม่มีข้อมูล (ต้องมีสิทธิ์ Ops/Owner)</td></tr>';
+  paginate('rlPg',data.length,rlPg,p=>{rlPg=p;rreqlog()});
+}
+async function runMainTool(tool, dry) {
+  if (_role!=='owner') { toast('⛔ เฉพาะ Owner','er'); return; }
+  const uid=(document.getElementById('mtUid')?.value||'').trim();
+  if (!dry && !(await customConfirm('รัน '+tool+' แบบ "เขียนข้อมูลจริง"'+(uid?' ของ '+uid:' ทั้งระบบ')+' ?\nเครื่องมือนี้แก้ข้อมูลในชีต Main',{title:'ยืนยันรัน Main Tool',danger:true,okLabel:'รันจริง'}))) return;
+  const out=document.getElementById('mtOut'); if(out) out.textContent='⏳ กำลังรัน '+tool+'...';
+  const r=await gasWrite('adminRunMainTool',{ tool, dryRun:dry, confirm:!dry, ...(uid?{uid}:{}) });
+  if(out) out.textContent=JSON.stringify(r,null,2);
+  toast(r&&r.status==='ok'?'✅ '+tool+(dry?' (ทดลอง) เสร็จ':' เสร็จ'):'❌ '+((r&&r.message)||'ไม่สำเร็จ'), r&&r.status==='ok'?'ok':'er');
 }
 
 function vFunding(id) {
@@ -4581,7 +4787,8 @@ function vFunding(id) {
     <div class="dr"><div class="dk">BNB ID</div><div class="dv" style="color:var(--gold)">${f.uid||'—'}</div></div>
     <div class="dr"><div class="dk">ชื่อ</div><div class="dv">${memByUid[String(f.uid)]||'—'}</div></div>
     <div class="dr"><div class="dk">Symbol</div><div class="dv mono">${f.symbol||'—'}</div></div>
-    <div class="dr"><div class="dk">จำนวน</div><div class="dv mono" style="color:var(--r);font-weight:700">-${fnum(Math.abs(parseFloat(f.amount||0)),6)} ${f.asset||'USDT'}</div></div>
+    <div class="dr"><div class="dk">Contract ID</div><div class="dv mono" style="font-size:10px">${f.contract_id||'— (Direct / ก่อน v6)'}</div></div>
+    <div class="dr"><div class="dk">จำนวน</div><div class="dv mono" style="color:${parseFloat(f.amount||0)<0?'var(--r)':'var(--g)'};font-weight:700">${parseFloat(f.amount||0)>=0?'+':'-'}${fnum(Math.abs(parseFloat(f.amount||0)),6)} ${f.asset||'USDT'}</div></div>
     <div class="dr"><div class="dk">เวลา</div><div class="dv">${fdt(f.created_at)}</div></div>
   `,[{l:'ปิด',c:'can',fn:'cm()'}]);
 }
@@ -4635,6 +4842,68 @@ const fnumInt = (n) => {
   if(isNaN(v)) return '—';
   return v.toLocaleString('en-US');
 };
+
+// ══════════════════════════════════════════
+//  [FIX-DASH v1] HELPERS — ตัวเลขสรุปบน Dashboard / หน้าต่างๆ ให้ตรงกัน
+// ══════════════════════════════════════════
+// ราคา: ปรับทศนิยมตามขนาดราคา (เหรียญราคาต่ำไม่ถูกปัดเหลือ 0.00)
+const fpx = (n) => {
+  const v = parseFloat(n);
+  if (n===''||n==null||isNaN(v)) return '—';
+  const a = Math.abs(v);
+  const d = a>=1000 ? 2 : a>=1 ? 4 : a>=0.01 ? 6 : 8;
+  return v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:d});
+};
+// ถอนที่ "รอ Admin ดำเนินการ" — นิยามเดียวกับปุ่มในตาราง (needsAdmin): awaiting_approval / needs_review / pending แบบ onchain
+const wdNeedsAdmin = d => {
+  const s = String(d.status||'').toLowerCase();
+  return s==='awaiting_approval' || s==='needs_review' || (s==='pending' && String(d.type||'onchain').toLowerCase()==='onchain');
+};
+// ยอดที่ติดป้าย USDT รวมเฉพาะเหรียญ USDT — เหรียญอื่นแยกแสดงเป็นข้อความต่อท้าย (ไม่เอาหน่วยต่างกันมาบวกกัน)
+const _coinOf = d => String(d.coin||d.token_symbol||'USDT').toUpperCase();
+const sumUsdt = rows => rows.filter(d=>_coinOf(d)==='USDT').reduce((s,d)=>s+(parseFloat(d.amount||0)||0),0);
+const otherCoinsTxt = rows => {
+  const m = {};
+  rows.forEach(d=>{ const c=_coinOf(d); if(c!=='USDT') m[c]=(m[c]||0)+(parseFloat(d.amount||0)||0); });
+  const e = Object.entries(m);
+  return e.length ? ' · อื่นๆ: '+e.map(([c,v])=>c+' '+fnum(v,4)).join(', ') : '';
+};
+// Mark price (Binance Futures public) — cache 30 วิ ใช้ร่วมกันทั้ง Positions / Revenue / Dashboard
+async function ensureMarkPrices(force) {
+  if (!force && Date.now()-MARK.ts < 30000 && Object.keys(MARK.map).length) return MARK.map;
+  try {
+    const ctrl = new AbortController();
+    const tm = setTimeout(()=>ctrl.abort(), 5000);
+    const res = await fetch('https://fapi.binance.com/fapi/v1/premiumIndex', { signal: ctrl.signal });
+    clearTimeout(tm);
+    if (res.ok) {
+      const list = await res.json();
+      const m = {};
+      list.forEach(i=>{ const v=parseFloat(i.markPrice); if (i.symbol && v>0) m[i.symbol]=v; });
+      if (Object.keys(m).length) { MARK.map = m; MARK.ts = Date.now(); }
+    }
+  } catch(e) { console.warn('[Admin] mark price fetch failed:', e.message); }
+  return MARK.map;
+}
+// Unrealized PnL ของ 1 position จาก mark price ใน cache — คืน null ถ้าไม่มี mark price ของ symbol นั้น
+function posUpnl(p) {
+  const mk = MARK.map[String(p.symbol||'').toUpperCase()];
+  if (!(mk>0)) return null;
+  const entry = parseFloat(p.entry_price||0), size = parseFloat(p.size||0);
+  return String(p.side||'').toLowerCase()==='long' ? (mk-entry)*size : (entry-mk)*size;
+}
+// การ์ด Dashboard ที่ข้อมูลต้นทางโหลดไม่ได้เพราะ role ไม่มีสิทธิ์ → แสดง "—" (ไม่ใช่ 0)
+const DASH_SRC = {
+  's-mem':'adminGetMembers','s-memact':'adminGetMembers','s-dep':'adminGetDeposits','s-wd':'adminGetWithdrawals',
+  's-pos':'adminGetOpenPositions','s-profit':'adminGetPositionHistory','s-loss':'adminGetPositionHistory',
+  's-earn':'adminGetEarnContracts','s-earnact':'adminGetEarnContracts','s-fund':'adminGetFunding',
+  's-reserve':'adminGetSystemStats','s-insurance':'adminGetSystemStats','s-feepool':'adminGetSystemStats',
+};
+function _applyDeniedDash() {
+  Object.keys(DASH_SRC).forEach(id=>{
+    if (_denied.has(DASH_SRC[id])) { const el=document.getElementById(id); if (el) el.textContent='—'; }
+  });
+}
 
 const isToday = dt => { if(!dt) return false; const d=new Date(dt), n=new Date(); return d.toDateString()===n.toDateString(); };
 
@@ -5356,10 +5625,11 @@ async function doLiquidate(cid) {
 // ══════════════════════════════════════════
 let fxPg=1;
 const FX_DEF = {
-  pos:  {src:'futPos',  cols:['uid','symbol','side','position_side','mode','lev','entry_price','size','margin','liq_price','realized_pnl','status','opened_at']},
-  ord:  {src:'futOrd',  cols:['order_id','uid','symbol','order_type','side','position_side','size','margin','limit_price','reduce_only','status','created_at']},
+  pos:  {src:'futPos',  cols:['id','uid','symbol','side','position_side','mode','lev','entry_price','size','margin','liq_price','tp','sl','realized_pnl','roi','status','is_liquidated','opened_at','closed_at']},
+  ord:  {src:'futOrd',  cols:['order_id','uid','symbol','order_type','side','position_side','size','margin','limit_price','tp_price','sl_price','reduce_only','position_id','status','created_at']},
   loans:{src:'loans',   cols:['loan_id','uid','collateral_coin','collateral_amount','borrow_usdt','ltv_current','liq_price','interest_rate','status','created_at']},
   coins:{src:'spotCoins',cols:['uid','coin','balance','updated_at']},
+  trades:{src:'trades',cols:['id','uid','position_id','contract_id','symbol','dir','order_type','price','filled','fee','role','realized_pnl','status','created_at']},   // contract_id ว่าง = Direct / แถวเก่า
 };
 function rfx(reset){
   if(reset) fxPg=1;
@@ -5389,6 +5659,7 @@ function exportCSV(type) {
     withdrawals: { data:D.withdrawals, fields:['withdraw_id','uid','username','coin','network','amount','to_address','fee','status','txid','note','created_at'] },
     positions:   { data:D.positions,   fields:['id','uid','symbol','side','lev','entry_price','size','realized_pnl','status','earn_contract_id','opened_at'] },
     txlog:       { data:D.txlog,       fields:['id','uid','type','asset','amount','symbol','note','created_at'] },
+    ledger:      { data:D.ledger,      fields:['id','uid','type','amount','contract_id','source_uid','note','created_at'] },
     funding:     { data:D.funding,     fields:['id','uid','symbol','amount','asset','created_at'] },
     futures:     { data:(D[FX_DEF[document.getElementById('fxTy')?.value||'pos'].src]||[]), fields:FX_DEF[document.getElementById('fxTy')?.value||'pos'].cols },
     revenue:     { data:D.revenue,     fields:['BNB_ID','Name','Team','Trades','WinCount','RealizedPnl','UnrealizedPnl','WalletBalance','EarnBalance'] },
